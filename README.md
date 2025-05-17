@@ -2,7 +2,7 @@
 
 ### A friendly terminal assistant that helps with command suggestions and corrections.
 
-![Screenshot from 2025-05-17 07-14-32](https://github.com/user-attachments/assets/106c3744-10ba-4079-b389-f92d602660f3)
+![image](https://github.com/user-attachments/assets/106c3744-10ba-4079-b389-f92d602660f3)
 ![image](https://github.com/user-attachments/assets/b5b9fbee-7811-4cff-a53d-6987c0663b87)
 ![image](https://github.com/user-attachments/assets/2d407e9f-18b7-409c-b74d-cd905f13454a)
 
@@ -184,6 +184,7 @@ To add explanations for more commands or customize existing ones, edit the `get_
 
 ## Known bugs 
 Uninstall.sh seems to break install.sh making it more manual work to reinstall atm. 
+Uninstall.sh / complete_removal.sh most likely not working correct atm. 
 
 ## Contributing
 
