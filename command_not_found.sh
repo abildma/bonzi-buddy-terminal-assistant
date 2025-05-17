@@ -56,7 +56,8 @@ case "$BASE_CMD" in
     explanation=$(get_command_explanation "cd")
     echo -e "${YELLOW}Bonzi Buddy:${NC} Did you mean: ${GREEN}cd ..${NC}?"
     echo -e "${CYAN}ℹ️  cd${NC} - $explanation"
-    read -p "Would you like to try the suggested command? (Y/n): " CONFIRM
+    echo -n "Would you like to try the suggested command? (Y/n): "
+    read CONFIRM
     if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
       $CMD_STRING
     else
@@ -70,7 +71,8 @@ case "$BASE_CMD" in
     explanation=$(get_command_explanation "ls")
     echo -e "${YELLOW}Bonzi Buddy:${NC} Did you mean: ${GREEN}ls${NC}?"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
-    read -p "Would you like to try the suggested command? (Y/n): " CONFIRM
+    echo -n "Would you like to try the suggested command? (Y/n): "
+    read CONFIRM
     if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
       $CMD_STRING
     else
@@ -86,7 +88,8 @@ case "$BASE_CMD" in
     explanation=$(get_command_explanation "ls")
     echo -e "${YELLOW}Bonzi Buddy:${NC} Did you mean: ${GREEN}$corrected${NC}?"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
-    read -p "Would you like to try the suggested command? (Y/n): " CONFIRM
+    echo -n "Would you like to try the suggested command? (Y/n): "
+    read CONFIRM
     if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
       $CMD_STRING
     else
@@ -142,7 +145,8 @@ case "$BASE_CMD" in
       
       echo -e "${YELLOW}Bonzi Buddy:${NC} Did you mean: ${GREEN}$closest_cmd${NC}?"
       echo -e "${CYAN}ℹ️  $closest_cmd${NC} - $explanation"
-      read -p "Would you like to try the suggested command? (Y/n): " CONFIRM
+      echo -n "Would you like to try the suggested command? (Y/n): "
+      read CONFIRM
       
       if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
         $CMD_STRING
