@@ -1,5 +1,4 @@
-# Bonzi Buddy Terminal Assistant
-
+![gif](https://github.com/user-attachments/assets/f1d57af1-e4f1-4b75-9007-a20a9ea56bb9)
 ### A friendly terminal assistant that helps with command suggestions and corrections.
 
 ![image](https://github.com/user-attachments/assets/106c3744-10ba-4079-b389-f92d602660f3)
