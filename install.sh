@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-# Bonzi Buddy Installer - Improved with reinstallation support
+# Bonzi Buddy Installer - Improved with reinstallation support and simpler completion handling
 
 # Enhanced color palette for a more appealing appearance
 GREEN='\033[0;32m'       # Success, commands
@@ -143,145 +143,38 @@ if [[ "$CURRENT_SHELL" == "zsh" ]]; then
         echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
     fi
     
-    # Create and install both bonzi and subo wrappers
+    # Create SIMPLER wrappers for both bonzi and subo commands
     echo -e "${BLUE}Creating command wrappers...${NC}"
-
-    # Create a dynamic wrapper script for subo command
-    cat > "$SCRIPT_DIR/subo-wrapper" << 'SUBOWRAPPEREOF'
+    
+    # Create subo wrapper script
+    cat > "$SCRIPT_DIR/subo-wrapper" << 'EOFSUBO'
 #!/bin/bash
-# Enhanced wrapper for subo that is resilient to installation issues
-
-# Function to find the Bonzi Buddy installation directory
-find_bonzi_dir() {
-    # Priority 1: Use environment variable if set
-    if [ -n "$BONZI_BUDDY_DIR" ] && [ -f "$BONZI_BUDDY_DIR/subo.sh" ]; then
-        echo "$BONZI_BUDDY_DIR"
-        return 0
-    fi
+# Simple wrapper for subo command
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]:-$0}" )" &> /dev/null && pwd )"
+"$SCRIPT_DIR/subo.sh" "$@"
+EOFSUBO
+    chmod +x "$SCRIPT_DIR/subo-wrapper"
     
-    # Priority 2: Look for installation in standard locations
-    local possible_locations=(
-        "$HOME/.bonzi-buddy"
-        "$HOME/bonzi-buddy"
-        "$HOME/CascadeProjects/bonzi-buddy"
-        "/usr/local/share/bonzi-buddy"
-        "/opt/bonzi-buddy"
-    )
-    
-    for location in "${possible_locations[@]}"; do
-        if [ -f "$location/subo.sh" ]; then
-            echo "$location"
-            return 0
-        fi
-    done
-    
-    # Priority 3: Search relative to this script
-    local script_dir="$(cd "$(dirname "$0")" && pwd)"
-    local parent_dir="$(dirname "$script_dir")"
-    
-    if [ -f "$parent_dir/subo.sh" ]; then
-        echo "$parent_dir"
-        return 0
-    fi
-    
-    # Not found anywhere
-    return 1
-}
-
-# Attempt to find the Bonzi Buddy directory
-BONZI_DIR=$(find_bonzi_dir)
-
-if [ -z "$BONZI_DIR" ]; then
-    echo "Error: Could not locate Bonzi Buddy installation directory."
-    echo "Please make sure Bonzi Buddy is properly installed by running:"
-    echo "  source ~/.zshrc   # To refresh environment variables"
-    echo "or reinstall Bonzi Buddy if the issue persists."
-    exit 1
-fi
-
-# Set the environment variable for this session (helps with subsequent calls)
-if [ -z "$BONZI_BUDDY_DIR" ]; then
-    export BONZI_BUDDY_DIR="$BONZI_DIR"
-    echo "Note: BONZI_BUDDY_DIR has been set to $BONZI_DIR for this session."
-    echo "For permanent fix, please restart your shell or run 'source ~/.zshrc'."
-fi
-
-# Run subo.sh with all passed arguments
-"$BONZI_DIR/subo.sh" "$@"
-SUBOWRAPPEREOF
-
-# Create a dynamic wrapper script for bonzi command
-cat > "$SCRIPT_DIR/bonzi-wrapper" << 'BONZIWRAPPEREOF'
+    # Create bonzi wrapper script
+    cat > "$SCRIPT_DIR/bonzi-wrapper" << 'EOFBONZI'
 #!/bin/bash
-# Enhanced wrapper for bonzi command that is resilient to installation issues
+# Simple wrapper for bonzi command
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]:-$0}" )" &> /dev/null && pwd )"
+"$SCRIPT_DIR/bonzi.sh" "$@"
+EOFBONZI
+    chmod +x "$SCRIPT_DIR/bonzi-wrapper"
 
-# Function to find the Bonzi Buddy installation directory
-find_bonzi_dir() {
-    # Priority 1: Use environment variable if set
-    if [ -n "$BONZI_BUDDY_DIR" ] && [ -f "$BONZI_BUDDY_DIR/bonzi.sh" ]; then
-        echo "$BONZI_BUDDY_DIR"
-        return 0
-    fi
+    # Create symbolic links in bin directory
+    echo -e "${BLUE}Installing command wrappers to ~/bin/...${NC}"
+    ln -sf "$SCRIPT_DIR/subo-wrapper" ~/bin/subo
+    ln -sf "$SCRIPT_DIR/bonzi-wrapper" ~/bin/bonzi
     
-    # Priority 2: Look for installation in standard locations
-    local possible_locations=(
-        "$HOME/.bonzi-buddy"
-        "$HOME/bonzi-buddy"
-        "$HOME/CascadeProjects/bonzi-buddy"
-        "/usr/local/share/bonzi-buddy"
-        "/opt/bonzi-buddy"
-    )
-    
-    for location in "${possible_locations[@]}"; do
-        if [ -f "$location/bonzi.sh" ]; then
-            echo "$location"
-            return 0
-        fi
-    done
-    
-    # Priority 3: Search relative to this script
-    local script_dir="$(cd "$(dirname "$0")" && pwd)"
-    local parent_dir="$(dirname "$script_dir")"
-    
-    if [ -f "$parent_dir/bonzi.sh" ]; then
-        echo "$parent_dir"
-        return 0
-    fi
-    
-    # Not found anywhere
-    return 1
-}
-
-# Attempt to find the Bonzi Buddy directory
-BONZI_DIR=$(find_bonzi_dir)
-
-if [ -z "$BONZI_DIR" ]; then
-    echo "Error: Could not locate Bonzi Buddy installation directory."
-    echo "Please make sure Bonzi Buddy is properly installed by running:"
-    echo "  source ~/.zshrc   # To refresh environment variables"
-    echo "or reinstall Bonzi Buddy if the issue persists."
-    exit 1
-fi
-
-# Set the environment variable for this session (helps with subsequent calls)
-if [ -z "$BONZI_BUDDY_DIR" ]; then
-    export BONZI_BUDDY_DIR="$BONZI_DIR"
-    echo "Note: BONZI_BUDDY_DIR has been set to $BONZI_DIR for this session."
-    echo "For permanent fix, please restart your shell or run 'source ~/.zshrc'."
-fi
-
-# Run bonzi.sh with all passed arguments
-"$BONZI_DIR/bonzi.sh" "$@"
-BONZIWRAPPEREOF
-
-# Make the wrappers executable
-chmod +x "$SCRIPT_DIR/subo-wrapper"
-chmod +x "$SCRIPT_DIR/bonzi-wrapper"
-
-# Create symbolic links in bin directory
-echo -e "${BLUE}Installing command wrappers to ~/bin/...${NC}"
-ln -sf "$SCRIPT_DIR/subo-wrapper" ~/bin/subo
-ln -sf "$SCRIPT_DIR/bonzi-wrapper" ~/bin/bonzi
+    # *** SIMPLIFIED COMPLETION SETUP - START ***
+    # Create the _subo completion file in the project directory
+    echo -e "${BLUE}Setting up simplified completion...${NC}"
+    cp "$SCRIPT_DIR/subo_completion.zsh" "$SCRIPT_DIR/_subo"
+    chmod +x "$SCRIPT_DIR/_subo"
+    # *** SIMPLIFIED COMPLETION SETUP - END ***
     
     # Check if our setup is already in .zshrc
     if grep -q "BONZI_BUDDY_DIR" ~/.zshrc; then
@@ -294,79 +187,36 @@ export BONZI_BUDDY_DIR="$SCRIPT_DIR"
 source "\$BONZI_BUDDY_DIR/zsh_setup.sh"
 
 # Enable tab completion
-fpath=(\$BONZI_BUDDY_DIR \$fpath)
+fpath=("\$BONZI_BUDDY_DIR" \$fpath)
 autoload -Uz compinit && compinit
 EOF
         echo -e "${GREEN}Bonzi Buddy has been added to your .zshrc!${NC}"
-        
-        # Install zsh completion file
-        echo -e "${BLUE}Setting up Zsh completion for subo...${NC}"
-        # Create Zsh completions directory if it doesn't exist
-        ZSH_COMPLETIONS_DIR="$HOME/.zsh/completions"
-        if [ ! -d "$ZSH_COMPLETIONS_DIR" ]; then
-            echo -e "${YELLOW}Creating Zsh completions directory...${NC}"
-            mkdir -p "$ZSH_COMPLETIONS_DIR"
-        fi
-
-        # Set up completion file
-        cp "$SCRIPT_DIR/subo_completion.zsh" "$ZSH_COMPLETIONS_DIR/_subo" 2>/dev/null
-        cp "$SCRIPT_DIR/subo_completion.zsh" ~/.zsh_completion_setup 2>/dev/null
     fi
     
     # Create command-not-found handler
-    echo -e "${BLUE}Setting up command-not-found handler...${NC}"
-    if [[ ! -d ~/.oh-my-zsh/functions ]]; then
-        mkdir -p ~/.oh-my-zsh/functions
-    fi
+    echo -e "${BLUE}Registering command-not-found handler...${NC}"
     
-    # Create a function file for the handler if using oh-my-zsh
-    if [[ -d ~/.oh-my-zsh ]]; then
-        cat << EOF > ~/.oh-my-zsh/functions/command_not_found_handler
-#!/bin/zsh
-# Bonzi Buddy Command Not Found Handler
-"$SCRIPT_DIR/command_not_found.sh" "\$@"
-EOF
-        chmod +x ~/.oh-my-zsh/functions/command_not_found_handler
-    fi
-    
-else
-    # For non-Zsh shells, we just create a warning file
-    echo -e "${YELLOW}Setting up minimal components...${NC}"
-    
-    # Create a simple note in user's home directory
-    cat << EOF > ~/.bonzi-buddy-note.txt
-Bonzi Buddy Note
-================
+    cat << EOF >> ~/.zshrc
 
-You attempted to install Bonzi Buddy while using a non-supported shell (${CURRENT_SHELL}).
-Bonzi Buddy currently only fully supports Zsh.
-
-To use Bonzi Buddy:
-1. Install Zsh: sudo apt install zsh (or equivalent for your distro)
-2. Make it your default shell: chsh -s /bin/zsh
-3. Log out and log back in
-4. Run the Bonzi Buddy installer again
-
-Want to help? Check out the Contributing section in the README to
-add support for ${CURRENT_SHELL}!
-
-Visit: https://github.com/abildma/bonzi-buddy-terminal-assistant
+# Command Not Found Handler for Bonzi Buddy
+command_not_found_handler() {
+  "\$BONZI_BUDDY_DIR/command_not_found.sh" "\$@"
+  return \$?
+}
 EOF
     
-    echo -e "${BLUE}Created instructions at ~/.bonzi-buddy-note.txt${NC}"
-    echo -e "${YELLOW}Some components were installed, but full functionality requires Zsh.${NC}"
-fi
+    # Add custom sudo completion
+    echo -e "${BLUE}Setting up completion for subo...${NC}"
+    
+    cat << 'EOF' >> ~/.zshrc
 
-# Create aliases
-echo -e "${BLUE}Creating aliases...${NC}"
-echo "alias bonzi='$SCRIPT_DIR/bonzi.sh'" > "$SCRIPT_DIR/bonzi.aliases"
-
-# Clean up any temporary files if they exist
-rm -f ~/.subo-completion.zsh 2>/dev/null
-rm -f ~/.subo-activate.zsh 2>/dev/null
-
-# Final installation message
-if [[ "$CURRENT_SHELL" == "zsh" ]]; then
+# Completion for subo (sudo wrapper)
+_subo() {
+  _sudo "$@"
+}
+compdef _subo subo
+EOF
+    
     # Export BONZI_BUDDY_DIR for immediate use (without requiring a restart)
     echo -e "${BLUE}Making Bonzi Buddy available in current shell...${NC}"
     export BONZI_BUDDY_DIR="$SCRIPT_DIR"
@@ -375,8 +225,20 @@ if [[ "$CURRENT_SHELL" == "zsh" ]]; then
     if [ -d "$HOME/bin" ]; then
         export PATH="$HOME/bin:$PATH"
     fi
+else
+    echo -e "${RED}Unsupported shell: ${CURRENT_SHELL}${NC}"
+    cat << EOF
 
-    # Setup is complete! User information
+Bonzi Buddy only supports Zsh at this time.
+Want to help? Check out the Contributing section in the README to
+add support for ${CURRENT_SHELL}!
+
+Visit: https://github.com/abildma/bonzi-buddy-terminal-assistant
+EOF
+fi
+
+# Final installation message
+if [[ "$CURRENT_SHELL" == "zsh" ]]; then
     echo ""
     echo -e "${BRIGHT_GREEN}Installation complete!${NC}"
     echo -e "${YELLOW}Bonzi Buddy has been successfully installed on your system.${NC}"
@@ -395,20 +257,11 @@ if [[ "$CURRENT_SHELL" == "zsh" ]]; then
     echo -e "  ${GREEN}bonzi${NC} [command] - Check for typos in any command"
     echo -e "  ${GREEN}subo${NC} [command]  - Run a command with sudo and typo-checking"
     echo -e "  ${CYAN}Missing commands${NC} will automatically be detected and corrected"
-    echo -e "  ${CYAN}Command explanations${NC} will help you understand what commands do"
+    echo -e "  ${CYAN}Typos in apt commands${NC} will be automatically fixed"
     echo ""
-    echo -e "${BLUE}Made a mistake?${NC} You can restore your original configuration with:"
-    echo -e "${YELLOW}cp ~/.zshrc.backup.bonzi ~/.zshrc${NC}"
-    echo ""
-    echo -e "${PURPLE}Enjoy your typo-free terminal experience with Bonzi Buddy!${NC}"
 else
     echo ""
-    echo -e "${YELLOW}Bonzi Buddy installation completed with limited functionality.${NC}"
-    echo -e "${BLUE}For full functionality, please:${NC}"
-    echo -e "  1. Install Zsh: ${GREEN}sudo apt install zsh${NC} (or equivalent for your distro)"
-    echo -e "  2. Make it your default shell: ${GREEN}chsh -s /bin/zsh${NC}"
-    echo -e "  3. Log out and back in, then run the installer again"
+    echo -e "${RED}Installation incomplete due to unsupported shell.${NC}"
+    echo -e "${YELLOW}Please switch to Zsh and try again.${NC}"
     echo ""
-    echo -e "${BLUE}See ~/.bonzi-buddy-note.txt for more information.${NC}"
-    echo -e "${BLUE}Want to contribute? Check out the Contributing section in the README!${NC}"
 fi
