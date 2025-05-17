@@ -104,7 +104,7 @@ After installation, Bonzi Buddy works in several powerful ways:
 If you type a non-existent command, Bonzi Buddy will automatically detect it and suggest corrections:
 
 ```bash
- lsbkadsa -a
+lsbkadsa -a
 Bonzi Buddy detected a missing command...
 Bonzi Buddy: Did you mean: lsblk?
 ℹ️  lsblk - Lists information about block devices (storage)
@@ -132,7 +132,7 @@ Would you like to try the suggested command? (Y/n):
 Use `subo` for commands that need sudo privileges. It supports full tab completion just like sudo:
 
 ```bash
- subo apt updaet
+subo apt updaet
 Bonzi Buddy: Did you mean: update?
 ℹ️  apt - Advanced package tool for Debian/Ubuntu
 Would you like to try the suggested command? (Y/n): 
@@ -161,8 +161,7 @@ The system includes a database of command explanations that helps you understand
 The `subo` command leverages the existing tab completion system from sudo, allowing you to enjoy both typo checking and full tab completion when using sudo commands.
 
 ## Customization
-
-### Adding New Commands
+- Adding New Commands
 You can easily add more commands to the detection system by editing the `COMMON_COMMANDS` array in `command_not_found.sh`. The system will automatically detect typos for any command you add.
 
 ### Extending Command Explanations
@@ -172,15 +171,11 @@ To add explanations for more commands or customize existing ones, edit the `get_
 
 Contributions are welcome! Here are some ways you can help improve Bonzi Buddy:
 
-### Priority: Bash Support
-We're looking for contributors who can help improve Bash shell integration. The current implementation works with explicit commands, but we'd love to have full command-not-found handler support working reliably across different Bash versions and distributions.
-
-### Other Contribution Ideas
 - Add support for more commands in the detection system
 - Improve typo detection algorithm
 - Add more detailed command explanations
 - Create themes or customization options
-- Add support for other shells (fish, etc.)
+- Add support for other shells (fish, bash, etc.)
 
 To contribute:
 1. Fork the repository
