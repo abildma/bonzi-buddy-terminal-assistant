@@ -143,31 +143,145 @@ if [[ "$CURRENT_SHELL" == "zsh" ]]; then
         echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
     fi
     
-    # Create and install proper subo wrapper for tab completion
-    echo -e "${BLUE}Creating subo wrapper for tab completion...${NC}"
+    # Create and install both bonzi and subo wrappers
+    echo -e "${BLUE}Creating command wrappers...${NC}"
 
-    # Create a dynamic wrapper script that uses BONZI_BUDDY_DIR
-    cat > "$SCRIPT_DIR/subo-wrapper" << 'WRAPPEREOF'
+    # Create a dynamic wrapper script for subo command
+    cat > "$SCRIPT_DIR/subo-wrapper" << 'SUBOWRAPPEREOF'
 #!/bin/bash
-# Wrapper for subo that uses the environment variable set during installation
+# Enhanced wrapper for subo that is resilient to installation issues
 
-# Check if BONZI_BUDDY_DIR is set
-if [ -z "$BONZI_BUDDY_DIR" ]; then
-    echo "Error: BONZI_BUDDY_DIR is not set. Please make sure Bonzi Buddy is properly installed."
-    echo "Try running 'source ~/.zshrc' or reinstalling Bonzi Buddy."
+# Function to find the Bonzi Buddy installation directory
+find_bonzi_dir() {
+    # Priority 1: Use environment variable if set
+    if [ -n "$BONZI_BUDDY_DIR" ] && [ -f "$BONZI_BUDDY_DIR/subo.sh" ]; then
+        echo "$BONZI_BUDDY_DIR"
+        return 0
+    fi
+    
+    # Priority 2: Look for installation in standard locations
+    local possible_locations=(
+        "$HOME/.bonzi-buddy"
+        "$HOME/bonzi-buddy"
+        "$HOME/CascadeProjects/bonzi-buddy"
+        "/usr/local/share/bonzi-buddy"
+        "/opt/bonzi-buddy"
+    )
+    
+    for location in "${possible_locations[@]}"; do
+        if [ -f "$location/subo.sh" ]; then
+            echo "$location"
+            return 0
+        fi
+    done
+    
+    # Priority 3: Search relative to this script
+    local script_dir="$(cd "$(dirname "$0")" && pwd)"
+    local parent_dir="$(dirname "$script_dir")"
+    
+    if [ -f "$parent_dir/subo.sh" ]; then
+        echo "$parent_dir"
+        return 0
+    fi
+    
+    # Not found anywhere
+    return 1
+}
+
+# Attempt to find the Bonzi Buddy directory
+BONZI_DIR=$(find_bonzi_dir)
+
+if [ -z "$BONZI_DIR" ]; then
+    echo "Error: Could not locate Bonzi Buddy installation directory."
+    echo "Please make sure Bonzi Buddy is properly installed by running:"
+    echo "  source ~/.zshrc   # To refresh environment variables"
+    echo "or reinstall Bonzi Buddy if the issue persists."
     exit 1
 fi
 
+# Set the environment variable for this session (helps with subsequent calls)
+if [ -z "$BONZI_BUDDY_DIR" ]; then
+    export BONZI_BUDDY_DIR="$BONZI_DIR"
+    echo "Note: BONZI_BUDDY_DIR has been set to $BONZI_DIR for this session."
+    echo "For permanent fix, please restart your shell or run 'source ~/.zshrc'."
+fi
+
 # Run subo.sh with all passed arguments
-"$BONZI_BUDDY_DIR/subo.sh" "$@"
-WRAPPEREOF
+"$BONZI_DIR/subo.sh" "$@"
+SUBOWRAPPEREOF
 
-    # Make the wrapper executable
-    chmod +x "$SCRIPT_DIR/subo-wrapper"
+# Create a dynamic wrapper script for bonzi command
+cat > "$SCRIPT_DIR/bonzi-wrapper" << 'BONZIWRAPPEREOF'
+#!/bin/bash
+# Enhanced wrapper for bonzi command that is resilient to installation issues
 
-    # Create symbolic link in bin directory
-    echo -e "${BLUE}Installing subo wrapper to ~/bin/subo...${NC}"
-    ln -sf "$SCRIPT_DIR/subo-wrapper" ~/bin/subo
+# Function to find the Bonzi Buddy installation directory
+find_bonzi_dir() {
+    # Priority 1: Use environment variable if set
+    if [ -n "$BONZI_BUDDY_DIR" ] && [ -f "$BONZI_BUDDY_DIR/bonzi.sh" ]; then
+        echo "$BONZI_BUDDY_DIR"
+        return 0
+    fi
+    
+    # Priority 2: Look for installation in standard locations
+    local possible_locations=(
+        "$HOME/.bonzi-buddy"
+        "$HOME/bonzi-buddy"
+        "$HOME/CascadeProjects/bonzi-buddy"
+        "/usr/local/share/bonzi-buddy"
+        "/opt/bonzi-buddy"
+    )
+    
+    for location in "${possible_locations[@]}"; do
+        if [ -f "$location/bonzi.sh" ]; then
+            echo "$location"
+            return 0
+        fi
+    done
+    
+    # Priority 3: Search relative to this script
+    local script_dir="$(cd "$(dirname "$0")" && pwd)"
+    local parent_dir="$(dirname "$script_dir")"
+    
+    if [ -f "$parent_dir/bonzi.sh" ]; then
+        echo "$parent_dir"
+        return 0
+    fi
+    
+    # Not found anywhere
+    return 1
+}
+
+# Attempt to find the Bonzi Buddy directory
+BONZI_DIR=$(find_bonzi_dir)
+
+if [ -z "$BONZI_DIR" ]; then
+    echo "Error: Could not locate Bonzi Buddy installation directory."
+    echo "Please make sure Bonzi Buddy is properly installed by running:"
+    echo "  source ~/.zshrc   # To refresh environment variables"
+    echo "or reinstall Bonzi Buddy if the issue persists."
+    exit 1
+fi
+
+# Set the environment variable for this session (helps with subsequent calls)
+if [ -z "$BONZI_BUDDY_DIR" ]; then
+    export BONZI_BUDDY_DIR="$BONZI_DIR"
+    echo "Note: BONZI_BUDDY_DIR has been set to $BONZI_DIR for this session."
+    echo "For permanent fix, please restart your shell or run 'source ~/.zshrc'."
+fi
+
+# Run bonzi.sh with all passed arguments
+"$BONZI_DIR/bonzi.sh" "$@"
+BONZIWRAPPEREOF
+
+# Make the wrappers executable
+chmod +x "$SCRIPT_DIR/subo-wrapper"
+chmod +x "$SCRIPT_DIR/bonzi-wrapper"
+
+# Create symbolic links in bin directory
+echo -e "${BLUE}Installing command wrappers to ~/bin/...${NC}"
+ln -sf "$SCRIPT_DIR/subo-wrapper" ~/bin/subo
+ln -sf "$SCRIPT_DIR/bonzi-wrapper" ~/bin/bonzi
     
     # Check if our setup is already in .zshrc
     if grep -q "BONZI_BUDDY_DIR" ~/.zshrc; then
