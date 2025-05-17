@@ -118,62 +118,11 @@ elif [[ "$CURRENT_SHELL" == "bash" ]]; then
         cp ~/.bashrc ~/.bashrc.backup.bonzi
     fi
     
-    # Create bin directory in home if it doesn't exist
-    if [ ! -d ~/bin ]; then
-        echo -e "${YELLOW}Creating ~/bin directory...${NC}"
-        mkdir -p ~/bin
-    fi
+    # Use the simplified Bash setup script
+    echo -e "${BLUE}Running simplified Bash setup...${NC}"
+    "$SCRIPT_DIR/bash_fix.sh"
     
-    # Add bin to PATH if not already there
-    if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
-        echo -e "${YELLOW}Adding ~/bin to your PATH...${NC}"
-        echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
-        # Apply PATH change for the current session
-        export PATH="$HOME/bin:$PATH"
-    fi
-    
-    # Install subo wrapper for tab completion
-    echo -e "${BLUE}Installing subo wrapper for tab completion...${NC}"
-    ln -sf "$SCRIPT_DIR/subo-wrapper" ~/bin/subo
-    chmod +x ~/bin/subo
-    
-    # Set up the Bash-specific command-not-found handler
-    echo -e "${BLUE}Setting up Bash command-not-found handler...${NC}"
-    "$SCRIPT_DIR/bash_command_not_found.sh"
-    
-    # Add Bonzi Buddy to .bashrc
-    echo -e "${GREEN}Adding Bonzi Buddy to your .bashrc...${NC}"
-    
-    # Check if our setup is already in .bashrc
-    if grep -q "BONZI_BUDDY_DIR" ~/.bashrc; then
-        echo -e "${YELLOW}Bonzi Buddy setup already found in .bashrc. Skipping...${NC}"
-    else
-        cat << EOF >> ~/.bashrc
-
-# Bonzi Buddy - Terminal Assistant
-export BONZI_BUDDY_DIR="$SCRIPT_DIR"
-alias bonzi="$SCRIPT_DIR/bonzi.sh"
-
-# Make sure bash-completion is loaded
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-    source /etc/bash_completion
-fi
-
-# Load subo command completion
-source "$SCRIPT_DIR/subo_completion.bash"
-
-# Command-not-found handler is now set up by bash_command_not_found.sh
-
-# Function to check commands before executing
-bonzi_preexec() {
-    if [[ "\$BASH_COMMAND" != "bonzi_preexec"* && "\$BASH_COMMAND" != "command_not_found_handle"* ]]; then
-        "$SCRIPT_DIR/bonzi_wrapper.sh" "\$BASH_COMMAND"
-    fi
-}
-trap 'bonzi_preexec' DEBUG
-EOF
-        echo -e "${GREEN}Bonzi Buddy has been added to your .bashrc!${NC}"
-    fi
+    echo -e "${GREEN}Bonzi Buddy has been set up for Bash!${NC}"
     
 else
     echo -e "${YELLOW}Unsupported shell: $CURRENT_SHELL${NC}"
