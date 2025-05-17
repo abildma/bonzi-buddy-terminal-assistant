@@ -17,7 +17,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # Source the command explanations
 source "$SCRIPT_DIR/command_explanations.sh"
 
-# Display the message
+# Display the initial message - keep this one with Bonzi Buddy name for branding
 echo -e "${PURPLE}Bonzi Buddy${NC} detected a ${YELLOW}missing command${NC}..."
 
 # Get the full command string and the command name
@@ -54,15 +54,15 @@ COMMON_COMMANDS=(
 case "$BASE_CMD" in
   "cd..")
     explanation=$(get_command_explanation "cd")
-    echo -e "${YELLOW}Bonzi Buddy:${NC} Did you mean: ${GREEN}cd ..${NC}?"
+    echo -e "${YELLOW}Did you mean:${NC} ${GREEN}cd ..${NC}?"
     echo -e "${CYAN}ℹ️  cd${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
     if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
-      echo -e "${BLUE}Bonzi Buddy:${NC} Command not executed."
+      echo -e "${BLUE}Command not executed.${NC}"
       return 127 # Standard code for command not found
     else
-      echo -e "${BLUE}Bonzi Buddy:${NC} Running: ${GREEN}cd ..${NC}"
+      echo -e "${BLUE}Running:${NC} ${GREEN}cd ..${NC}"
       cd ..
     fi
     exit $?
@@ -70,15 +70,15 @@ case "$BASE_CMD" in
     
   "sl")
     explanation=$(get_command_explanation "ls")
-    echo -e "${YELLOW}Bonzi Buddy:${NC} Did you mean: ${GREEN}ls${NC}?"
+    echo -e "${YELLOW}Did you mean:${NC} ${GREEN}ls${NC}?"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
     if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
-      echo -e "${BLUE}Bonzi Buddy:${NC} Command not executed."
+      echo -e "${BLUE}Command not executed.${NC}"
       return 127 # Standard code for command not found
     else
-      echo -e "${BLUE}Bonzi Buddy:${NC} Running: ${GREEN}ls $CMD_ARGS${NC}"
+      echo -e "${BLUE}Running:${NC} ${GREEN}ls $CMD_ARGS${NC}"
       ls $CMD_ARGS
     fi
     exit $?
@@ -88,15 +88,15 @@ case "$BASE_CMD" in
     # Handle ls-la, ls-l, etc.
     corrected="ls ${BASE_CMD#ls-}"
     explanation=$(get_command_explanation "ls")
-    echo -e "${YELLOW}Bonzi Buddy:${NC} Did you mean: ${GREEN}$corrected${NC}?"
+    echo -e "${YELLOW}Did you mean:${NC} ${GREEN}$corrected${NC}?"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
     if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
-      echo -e "${BLUE}Bonzi Buddy:${NC} Command not executed."
+      echo -e "${BLUE}Command not executed.${NC}"
       return 127 # Standard code for command not found
     else
-      echo -e "${BLUE}Bonzi Buddy:${NC} Running: ${GREEN}$corrected $CMD_ARGS${NC}"
+      echo -e "${BLUE}Running:${NC} ${GREEN}$corrected $CMD_ARGS${NC}"
       eval "$corrected $CMD_ARGS"
     fi
     exit $?
@@ -146,16 +146,16 @@ case "$BASE_CMD" in
       # Get an explanation of what the command does
       explanation=$(get_command_explanation "$closest_cmd")
       
-      echo -e "${YELLOW}Bonzi Buddy:${NC} Did you mean: ${GREEN}$closest_cmd${NC}?"
+      echo -e "${YELLOW}Did you mean:${NC} ${GREEN}$closest_cmd${NC}?"
       echo -e "${CYAN}ℹ️  $closest_cmd${NC} - $explanation"
       echo -n "Would you like to try the suggested command? (Y/n): "
       read CONFIRM
       
       if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
-        echo -e "${BLUE}Bonzi Buddy:${NC} Command not executed."
+        echo -e "${BLUE}Command not executed.${NC}"
         return 127 # Standard code for command not found
       else
-        echo -e "${BLUE}Bonzi Buddy:${NC} Running: ${GREEN}$closest_cmd $CMD_ARGS${NC}"
+        echo -e "${BLUE}Running:${NC} ${GREEN}$closest_cmd $CMD_ARGS${NC}"
         eval "$closest_cmd $CMD_ARGS"
       fi
       exit $?
