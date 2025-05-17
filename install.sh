@@ -1,12 +1,23 @@
-#!/bin/bash
+#!/bin/zsh
 
-# Colors for friendly messages
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-CYAN='\033[0;36m'
-NC='\033[0m' # No Color
+# Bonzi Buddy Installer - Improved with reinstallation support
+
+# Enhanced color palette for a more appealing appearance
+GREEN='\033[0;32m'       # Success, commands
+BRIGHT_GREEN='\033[1;32m' # Highlighted commands
+YELLOW='\033[1;33m'      # Warnings, suggestions
+BLUE='\033[0;34m'        # Information
+LIGHT_BLUE='\033[0;94m'  # Secondary information
+CYAN='\033[0;36m'        # Command descriptions
+MAGENTA='\033[0;35m'     # Command highlights
+PURPLE='\033[0;35m'      # Bonzi branding
+BRIGHT_PURPLE='\033[1;35m' # Enhanced branding
+RED='\033[0;31m'         # Errors
+GRAY='\033[0;90m'        # Subtle information
+WHITE='\033[1;37m'       # Highlighted text
+BOLD='\033[1m'           # Bold text
+UNDERLINE='\033[4m'      # Underlined text
+NC='\033[0m'             # No Color (reset)
 
 # ASCII art banner
 echo -e "${PURPLE}"
@@ -24,8 +35,51 @@ echo -e "${YELLOW}Welcome to Bonzi Buddy Installation!${NC}"
 echo -e "${CYAN}Note: Bonzi Buddy currently only supports Zsh${NC}"
 echo ""
 
-# Get the directory where the script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+# Get the directory where the script is located - Zsh compatible approach
+if [[ -n "${BASH_SOURCE[0]}" ]]; then
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+else
+    # If BASH_SOURCE is not available (Zsh), use $0 instead
+    SCRIPT_DIR="$( cd "$( dirname "$0" )" &> /dev/null && pwd )"
+fi
+
+# Pre-install cleanup - Clean up any previous installation remnants
+echo -e "${BLUE}Checking for previous installation remnants...${NC}"
+
+# Function to clean .zshrc file of any previous Bonzi Buddy entries
+clean_zshrc() {
+    if [[ -f ~/.zshrc ]]; then
+        echo -e "${YELLOW}Cleaning up any previous Bonzi Buddy entries in .zshrc...${NC}"
+        
+        # Create a temporary file without previous Bonzi Buddy sections
+        TMP_FILE="${HOME}/.zshrc.tmp.$RANDOM"
+        
+        # Use a safer approach to filter out Bonzi Buddy entries
+        cat ~/.zshrc | grep -v "# Bonzi Buddy" | 
+                      grep -v "BONZI_BUDDY_DIR" | 
+                      grep -v "bonzi.sh" | 
+                      grep -v "subo.sh" | 
+                      grep -v "bonzi_preexec" |
+                      grep -v "command_not_found_handler" > "$TMP_FILE"
+        
+        # Replace the original with cleaned version if temp file exists and has content
+        if [[ -f "$TMP_FILE" && -s "$TMP_FILE" ]]; then
+            cp "$TMP_FILE" ~/.zshrc
+            rm -f "$TMP_FILE"
+            echo -e "${GREEN}Previous Bonzi Buddy entries cleaned from .zshrc${NC}"
+        else
+            echo -e "${YELLOW}No changes needed to .zshrc${NC}"
+            rm -f "$TMP_FILE" 2>/dev/null
+        fi
+    fi
+}
+
+# Clean .zshrc before installation
+clean_zshrc
+
+# Unset any existing Bonzi Buddy functions in current shell
+unfunction command_not_found_handler 2>/dev/null
+unset BONZI_BUDDY_DIR 2>/dev/null
 
 # Make scripts executable
 echo -e "${BLUE}Making scripts executable...${NC}"
@@ -67,8 +121,11 @@ if [[ "$CURRENT_SHELL" == "zsh" ]]; then
     
     # Create backup of .zshrc if it exists
     if [[ -f ~/.zshrc ]]; then
-        echo -e "${YELLOW}Creating backup of your .zshrc file to ~/.zshrc.backup.bonzi${NC}"
-        cp ~/.zshrc ~/.zshrc.backup.bonzi
+        # Use timestamp for unique backup with proper path expansion
+        BACKUP_FILE="${HOME}/.zshrc.backup.bonzi.$(date +%Y%m%d%H%M%S)"
+        echo -e "${YELLOW}Creating backup of your .zshrc file to $BACKUP_FILE${NC}"
+        cp ~/.zshrc "$BACKUP_FILE"
+        echo -e "${GREEN}Backup created successfully${NC}"
     fi
     
     # Add Bonzi Buddy to .zshrc
@@ -107,8 +164,17 @@ EOF
         echo -e "${GREEN}Bonzi Buddy has been added to your .zshrc!${NC}"
         
         # Install zsh completion file
-        echo -e "${BLUE}Setting up zsh tab completion...${NC}"
-        ln -sf "$SCRIPT_DIR/subo_completion.zsh" "$SCRIPT_DIR/_subo"
+        echo -e "${BLUE}Setting up Zsh completion for subo...${NC}"
+        # Create Zsh completions directory if it doesn't exist
+        ZSH_COMPLETIONS_DIR="$HOME/.zsh/completions"
+        if [ ! -d "$ZSH_COMPLETIONS_DIR" ]; then
+            echo -e "${YELLOW}Creating Zsh completions directory...${NC}"
+            mkdir -p "$ZSH_COMPLETIONS_DIR"
+        fi
+
+        # Set up completion file
+        cp "$SCRIPT_DIR/subo_completion.zsh" "$ZSH_COMPLETIONS_DIR/_subo" 2>/dev/null
+        cp "$SCRIPT_DIR/subo_completion.zsh" ~/.zsh_completion_setup 2>/dev/null
     fi
     
     # Create command-not-found handler
@@ -166,11 +232,18 @@ rm -f ~/.subo-activate.zsh 2>/dev/null
 # Final installation message
 if [[ "$CURRENT_SHELL" == "zsh" ]]; then
     echo ""
-    echo -e "${GREEN}Installation complete!${NC}"
-    echo -e "${YELLOW}To activate Bonzi Buddy, please run:${NC}"
-    echo -e "${PURPLE}source ~/.zshrc${NC}"
+    echo -e "${BRIGHT_GREEN}Installation complete!${NC}"
+    echo -e "${YELLOW}Bonzi Buddy has been successfully installed on your system.${NC}"
+    echo -e "${CYAN}To activate Bonzi Buddy, please run:${NC}"
+    echo -e "${BRIGHT_PURPLE}exec zsh${NC}"
     echo ""
-    echo -e "You can use these commands and features:"
+    echo -e "${BLUE}This will completely reload your shell with Bonzi Buddy activated.${NC}"
+    echo -e "${PURPLE}Enjoy using Bonzi Buddy!${NC}"
+    echo ""
+    echo -e "${GRAY}If you ever want to uninstall Bonzi Buddy, simply run:${NC}"
+    echo -e "${YELLOW}$SCRIPT_DIR/uninstall.sh${NC}"
+    echo ""
+    echo -e "${GREEN}You can use these commands and features:${NC}"
     echo -e "  ${GREEN}bonzi${NC} [command] - Check for typos in any command"
     echo -e "  ${GREEN}subo${NC} [command]  - Run a command with sudo and typo-checking"
     echo -e "  ${CYAN}Missing commands${NC} will automatically be detected and corrected"
