@@ -1,6 +1,6 @@
 # Bonzi Buddy Terminal Assistant
 
-A friendly terminal assistant that helps with command suggestions and corrections, without any spyware or adware!
+A friendly terminal assistant that helps with command suggestions and corrections.
 
 ![Bonzi Buddy Terminal](https://i.imgur.com/7qVZeMj.png)
 
@@ -25,7 +25,6 @@ The name is used as a nostalgic reference only.
 - **Smart Handling of Arguments**: Preserves all command arguments when making corrections
 - **Colorful, Friendly Interface**: Easy-to-read color-coded suggestions and explanations
 - **Multi-Shell Support**: Seamless integration with both bash and zsh
-- **No Spyware or Adware**: Completely safe, local, and open-source
 
 ## Quick Installation
 
