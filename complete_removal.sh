@@ -24,8 +24,9 @@ echo
 echo -e "${RED}This is a nuclear option that may modify your shell configuration.${NC}"
 echo
 
-# Ask for confirmation
-read -p "Are you absolutely sure you want to proceed? (yes/no): " CONFIRM
+# Ask for confirmation - Zsh compatible version
+echo -n "Are you absolutely sure you want to proceed? (yes/no): "
+read CONFIRM
 if [[ "$CONFIRM" != "yes" ]]; then
     echo -e "${BLUE}Cancelling removal operation.${NC}"
     exit 0
@@ -41,23 +42,24 @@ echo
 
 echo -e "${BLUE}[1/7] Removing ALL Bonzi Buddy functions from current session...${NC}"
 
-# Create a temporary script to unset all Bonzi Buddy related functions
-cat << 'EOF' > /tmp/unset_bonzi_functions.zsh
-# Unset ALL possible Bonzi Buddy related functions
+# Unset all Bonzi Buddy related functions directly (more reliable in Zsh)
+echo -e "   ${YELLOW}Attempting to unset all Bonzi functions directly...${NC}"
+
+# Try both Zsh and POSIX ways to unset functions
 unfunction command_not_found_handler 2>/dev/null
 unfunction bonzi_preexec 2>/dev/null
 unfunction _subo_completion 2>/dev/null
+
+# Unset environment variables
 unset BONZI_BUDDY_DIR 2>/dev/null
+
+# Backup attempt with unset -f for compatibility
 unset -f command_not_found_handler 2>/dev/null
 unset -f suggest_correction 2>/dev/null
 unset -f get_command_explanation 2>/dev/null
 unset -f bonzi_preexec 2>/dev/null
-echo "Unset all Bonzi Buddy functions from memory"
-EOF
 
-# Source it to run in current shell
-source /tmp/unset_bonzi_functions.zsh
-rm /tmp/unset_bonzi_functions.zsh
+echo -e "   ${GREEN}Unset all Bonzi Buddy functions from memory${NC}"
 
 # =============================================
 # 2. COMPLETELY CLEAN ALL SHELL CONFIGURATION FILES
@@ -71,36 +73,53 @@ deep_clean_file() {
     if [[ -f "$file" ]]; then
         echo -e "   ${YELLOW}Cleaning $file...${NC}"
         
-        # Create a backup
-        cp "$file" "${file}.backup.$(date +%Y%m%d%H%M%S)"
+        # Create a backup with timestamp
+        BACKUP_FILE="${file}.backup.$(date +%Y%m%d%H%M%S)"
+        cp "$file" "$BACKUP_FILE"
+        echo -e "   ${GREEN}Created backup: $BACKUP_FILE${NC}"
         
-        # Remove ALL Bonzi Buddy related lines and sections
-        sed -i '/[Bb]onzi/d' "$file"
-        sed -i '/command_not_found_handler/d' "$file"
-        sed -i '/bonzi_preexec/d' "$file"
-        sed -i '/subo/d' "$file"
-        sed -i '/BONZI_BUDDY_DIR/d' "$file"
+        # Use a safer, more compatible approach for sed in-place editing
+        # This approach works on more systems including macOS
+        TMP_FILE="${file}.tmp"
+        grep -v "[Bb]onzi" "$file" > "$TMP_FILE" && mv "$TMP_FILE" "$file"
+        grep -v "command_not_found_handler" "$file" > "$TMP_FILE" && mv "$TMP_FILE" "$file"
+        grep -v "bonzi_preexec" "$file" > "$TMP_FILE" && mv "$TMP_FILE" "$file"
+        grep -v "subo" "$file" > "$TMP_FILE" && mv "$TMP_FILE" "$file"
+        grep -v "BONZI_BUDDY_DIR" "$file" > "$TMP_FILE" && mv "$TMP_FILE" "$file"
         
         echo -e "   ${GREEN}Cleaned ${file}${NC}"
     fi
 }
 
 # Clean all possible configuration files
-deep_clean_file ~/.zshrc
-deep_clean_file ~/.zshenv
-deep_clean_file ~/.zprofile
-deep_clean_file ~/.bashrc
-deep_clean_file ~/.bash_profile
-deep_clean_file ~/.profile
+# Clean standard Zsh config files
+for config_file in ~/.zshrc ~/.zshenv ~/.zshprofile ~/.zlogin ~/.zlogout; do
+    if [[ -f "$config_file" ]]; then
+        deep_clean_file "$config_file"
+    fi
+done
+
+# Also clean standard Bash files in case they were modified by older versions
+for bash_file in ~/.bashrc ~/.bash_profile ~/.profile; do
+    if [[ -f "$bash_file" ]]; then
+        deep_clean_file "$bash_file"
+    fi
+done
 
 # Additionally, check for any configuration files in common locations
-for config_dir in ~/.config/zsh ~/.oh-my-zsh/custom ~/.zshrc.d; do
-    if [[ -d "$config_dir" ]]; then
-        echo -e "   ${YELLOW}Checking $config_dir for Bonzi Buddy files...${NC}"
-        find "$config_dir" -type f -exec grep -l "bonzi\|subo\|command_not_found_handler" {} \; 2>/dev/null | while read file; do
-            echo -e "   ${RED}Found Bonzi Buddy in $file${NC}"
-            deep_clean_file "$file"
-        done
+for zsh_config_dir in ~/.zshrc.d ~/.oh-my-zsh/custom ~/.config/zsh; do
+    if [[ -d "$zsh_config_dir" ]]; then
+        echo -e "   ${BLUE}Checking $zsh_config_dir for Bonzi Buddy files...${NC}"
+        BONZI_FILES=$(find "$zsh_config_dir" -type f -exec grep -l "bonzi\|subo\|command_not_found_handler" {} \; 2>/dev/null || echo "")
+        
+        if [[ -n "$BONZI_FILES" ]]; then
+            echo "$BONZI_FILES" | while read -r file; do
+                echo -e "   ${RED}Found Bonzi Buddy in $file${NC}"
+                deep_clean_file "$file"
+            done
+        else
+            echo -e "   ${GREEN}No Bonzi Buddy files found in $zsh_config_dir${NC}"
+        fi
     fi
 done
 
@@ -109,6 +128,18 @@ done
 # =============================================
 
 echo -e "${BLUE}[3/7] Removing ALL command-not-found handlers...${NC}"
+
+# If command_not_found_handler is defined in current session, unset it
+echo -e "${BLUE}Unsetting command_not_found_handler in current session...${NC}"
+
+# Directly attempt to unset the function in the current script
+# This is more reliable than using a temporary file in Zsh
+if typeset -f command_not_found_handler > /dev/null 2>&1; then
+    unfunction command_not_found_handler 2>/dev/null
+    echo -e "   ${GREEN}Command not found handler has been unset${NC}"
+else
+    echo -e "   ${YELLOW}No command not found handler found in current session${NC}"
+fi
 
 # Check common locations for command-not-found handlers
 for handler_path in ~/.oh-my-zsh/functions/command_not_found_handler \
@@ -135,9 +166,15 @@ rm -f ~/.bonzi-buddy-note.txt 2>/dev/null
 rm -f ~/bin/subo 2>/dev/null
 rm -f ~/.subo-function.zsh ~/.subo-completion.zsh ~/.subo-activate.zsh ~/.zsh_completion_setup 2>/dev/null
 
-# Cleanup any shell completions
-for completion_dir in $(zsh -c 'echo -n $fpath' | tr ' ' '\n' | grep -v '^$'); do
+# Cleanup any shell completions - safer Zsh approach
+echo -e "   ${YELLOW}Checking Zsh completion paths...${NC}"
+
+# Get completion paths directly in the script to avoid subshell issues
+ZSH_COMPLETION_PATHS=($(zsh -c 'for p in $fpath; do echo $p; done' 2>/dev/null || echo "/usr/share/zsh/site-functions"))
+
+for completion_dir in "${ZSH_COMPLETION_PATHS[@]}"; do
     if [[ -d "$completion_dir" ]]; then
+        echo -e "   ${BLUE}Checking $completion_dir for completions...${NC}"
         if [[ -f "$completion_dir/_subo" ]]; then
             echo -e "   ${RED}Found _subo completion in $completion_dir${NC}"
             rm -f "$completion_dir/_subo"
@@ -154,7 +191,7 @@ echo -e "${BLUE}[5/7] Checking for ANY remaining Bonzi Buddy files...${NC}"
 
 # Search in home directory for any remnants
 echo -e "   ${YELLOW}Searching for any remaining Bonzi Buddy files...${NC}"
-REMAINING_FILES=$(find ~ -type f -name "*bonzi*" 2>/dev/null)
+REMAINING_FILES=$(find ~ -type f -name "*bonzi*" 2>/dev/null || echo "")
 
 if [[ -n "$REMAINING_FILES" ]]; then
     echo -e "   ${RED}Found remaining files:${NC}"
@@ -171,7 +208,7 @@ fi
 echo -e "${BLUE}[6/7] Checking for ANY remaining references in configuration...${NC}"
 
 # Use grep to find any remaining references
-REMAINING_REFS=$(grep -r "bonzi\|subo\|command_not_found_handler" ~ --include=".*" 2>/dev/null)
+REMAINING_REFS=$(grep -r "bonzi\|subo\|command_not_found_handler" ~ --include=".*" 2>/dev/null || echo "")
 
 if [[ -n "$REMAINING_REFS" ]]; then
     echo -e "   ${RED}Found remaining references:${NC}"
