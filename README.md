@@ -48,11 +48,23 @@ source ~/.zshrc
 # Navigate to the repository directory
 cd bonzi-buddy-terminal-assistant
 
-# Run the uninstaller
+# Run the standard uninstaller
 chmod +x uninstall.sh && ./uninstall.sh
 
 # Apply changes to your current session
-source ~/.zshrc
+exec zsh
+```
+
+### Complete Removal
+
+If you're experiencing any issues with the standard uninstaller or want to make absolutely certain that all traces of Bonzi Buddy are removed from your system, use the complete removal script:
+
+```bash
+# Run the complete removal script (nuclear option)
+chmod +x complete_removal.sh && ./complete_removal.sh
+
+# Follow the prompts and then restart your shell
+exec zsh
 ```
 
 ## Manual Installation
