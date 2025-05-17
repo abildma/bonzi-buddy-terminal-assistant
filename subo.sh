@@ -38,7 +38,7 @@ else
             "cat") echo "Display file contents" ;;
             "grep") echo "Search for patterns in files" ;;
             "find") echo "Search for files in a directory hierarchy" ;;
-            "apt") echo "Package manager for Debian/Ubuntu" ;;
+            "apt") echo "Advanced package tool for Debian/Ubuntu" ;;
             "apt-get") echo "Package manager for Debian/Ubuntu" ;;
             "yum") echo "Package manager for RHEL/CentOS/Fedora" ;;
             "dnf") echo "Package manager for Fedora" ;;
@@ -51,45 +51,6 @@ else
     }
 fi
 
-# Function to suggest corrections for common command typos
-suggest_correction() {
-    local cmd="$1"
-    local typo=""
-    local suggestion=""
-    
-    # Check for apt command typos
-    if [[ "$cmd" =~ apt[[:space:]]+([[:alnum:]\-]+) ]]; then
-        typo=${BASH_REMATCH[1]}
-        
-        case "$typo" in
-            # Common apt update typos
-            "updote"|"updat"|"upadte"|"opdate"|"uppdate"|"updte"|"updaet"|"updae"|"updete"|"updait"|"upate"|"upd"|"update-") 
-                suggestion="update";;
-            
-            # apt upgrade typos
-            "upgrad"|"upgrage"|"upgrde"|"upgarde"|"uprgade"|"uppgrade"|"upgread"|"upgrdae"|"upgad"|"upgrade-"|"opgrade") 
-                suggestion="upgrade";;
-            
-            # apt install typos
-            "instlal"|"instal"|"instll"|"insatll"|"isntall"|"intsall"|"instaall"|"intsall"|"isntall"|"isntal"|"innstall"|"installl"|"nistall"|"install-") 
-                suggestion="install";;
-            
-            # apt remove typos
-            "remov"|"remeve"|"removr"|"reomve"|"rmove"|"removee"|"romove"|"remove-") 
-                suggestion="remove";;
-                
-            # Other apt commands with typos...
-            *) suggestion="";;
-        esac
-        
-        if [ -n "$suggestion" ]; then
-            return 0
-        fi
-    fi
-    
-    return 1  # No suggestion
-}
-
 # Check if at least one argument is provided
 if [ $# -eq 0 ]; then
     echo -e "${YELLOW}Subo:${NC} Please provide a command to run with sudo."
@@ -98,59 +59,78 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-# Create the full command string
-COMMAND="$*"
-
 # Display a welcome message
 echo -e "${PURPLE}Subo:${NC} Running command with ${GREEN}sudo${NC}"
 
-# Check for typos in the command
-typo=""
-suggestion=""
-corrected_command=""
-
-# Parse the command properly
+# Check for typos in the command if it's an apt command
 if [[ "$1" == "apt" && $# -ge 2 ]]; then
     # Get the apt subcommand (second argument)
     apt_cmd="$2"
     
     # Check for common typos in apt subcommands
+    typo=""
+    suggestion=""
+    corrected_args=()
+    
+    # Copy the first argument (apt)
+    corrected_args+=("$1")
+    
     case "$apt_cmd" in
         # Common apt update typos
         "updote"|"updat"|"upadte"|"opdate"|"uppdate"|"updte"|"updaet"|"updae"|"updete"|"updait"|"upate"|"upd"|"update-") 
             typo="$apt_cmd"
-            suggestion="update";;
+            suggestion="update"
+            corrected_args+=("update")
+            ;;
         
         # apt upgrade typos
         "upgrad"|"upgrage"|"upgrde"|"upgarde"|"uprgade"|"uppgrade"|"upgread"|"upgrdae"|"upgad"|"upgrade-"|"opgrade") 
             typo="$apt_cmd"
-            suggestion="upgrade";;
+            suggestion="upgrade"
+            corrected_args+=("upgrade")
+            ;;
         
         # apt install typos
         "instlal"|"instal"|"instll"|"insatll"|"isntall"|"intsall"|"instaall"|"intsall"|"isntall"|"isntal"|"innstall"|"installl"|"nistall"|"install-"|"instael") 
             typo="$apt_cmd"
-            suggestion="install";;
+            suggestion="install"
+            corrected_args+=("install")
+            ;;
         
         # apt remove typos
         "remov"|"remeve"|"removr"|"reomve"|"rmove"|"removee"|"romove"|"remove-") 
             typo="$apt_cmd"
-            suggestion="remove";;
+            suggestion="remove"
+            corrected_args+=("remove")
+            ;;
+            
+        # No typo detected, use as-is
+        *)
+            corrected_args+=("$apt_cmd")
+            ;;
     esac
     
-    # If a typo was found, construct the corrected command
-    if [ -n "$suggestion" ]; then
-        # Get any remaining arguments
-        remaining_args=""
-        if [ $# -gt 2 ]; then
-            remaining_args=" ${@:3}"
-        fi
-        corrected_command="apt $suggestion$remaining_args"
+    # Add any remaining arguments
+    if [ $# -gt 2 ]; then
+        for ((i=3; i<=$#; i++)); do
+            corrected_args+=("${!i}")
+        done
+    fi
+    
+    # If we found a typo, show suggestion
+    if [ -n "$typo" ]; then
+        # Format the corrected command for display
+        corrected_cmd=""
+        for arg in "${corrected_args[@]}"; do
+            corrected_cmd="$corrected_cmd $arg"
+        done
+        corrected_cmd=$(echo "$corrected_cmd" | sed 's/^ //')
         
-        # Show suggestion with the bracket style
+        # Show suggestion with bracket style
         echo -e ""
-        echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}$corrected_command${NC} ${YELLOW}]${NC}"
+        echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}$corrected_cmd${NC} ${YELLOW}]${NC}"
         
-        # Get explanation for the suggested command
+        # Get explanation for apt
         explanation=$(get_command_explanation "apt")
         echo -e "${CYAN}ℹ️  apt${NC} - $explanation"
         
@@ -158,27 +138,21 @@ if [[ "$1" == "apt" && $# -ge 2 ]]; then
         read CONFIRM
         
         if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
-            echo -e "${BLUE}Running:${NC} ${GREEN}sudo $COMMAND${NC}"
-            # Execute commands properly by passing each argument separately
-            sudo "$@"
+            # Run original command with all arguments
+            echo -e "${BLUE}Running:${NC} ${GREEN}sudo $@${NC}"
+            exec sudo "$@"
         else
-            echo -e "${BLUE}Running:${NC} ${GREEN}sudo $corrected_command${NC}"
-            # Split the corrected command and execute properly
-            if [ -n "$corrected_command" ]; then
-                # Parse the corrected command into an array
-                corrected_args=($corrected_command)
-                sudo "${corrected_args[@]}"
-            fi
+            # Run corrected command
+            echo -e "${BLUE}Running:${NC} ${GREEN}sudo $corrected_cmd${NC}"
+            exec sudo "${corrected_args[@]}"
         fi
     else
-        # No suggestion, just run the command
-        echo -e "${BLUE}Running:${NC} ${GREEN}sudo $COMMAND${NC}"
-        # Execute commands properly by passing each argument separately
-        sudo "$@"
+        # No typo, run command as-is
+        echo -e "${BLUE}Running:${NC} ${GREEN}sudo $@${NC}"
+        exec sudo "$@"
     fi
 else
-    # Not an apt command, just run it
-    echo -e "${BLUE}Running:${NC} ${GREEN}sudo $COMMAND${NC}"
-    # Execute commands properly by passing each argument separately
-    sudo "$@"
+    # Not an apt command or not enough arguments, run as-is
+    echo -e "${BLUE}Running:${NC} ${GREEN}sudo $@${NC}"
+    exec sudo "$@"
 fi
