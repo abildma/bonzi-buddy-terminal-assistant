@@ -107,56 +107,70 @@ echo -e "${PURPLE}Subo:${NC} Running command with ${GREEN}sudo${NC}"
 # Check for typos in the command
 typo=""
 suggestion=""
+corrected_command=""
 
-if [[ "$COMMAND" =~ apt[[:space:]]+([[:alnum:]\-]+) ]]; then
-    typo=${BASH_REMATCH[1]}
+# Parse the command properly
+if [[ "$1" == "apt" && $# -ge 2 ]]; then
+    # Get the apt subcommand (second argument)
+    apt_cmd="$2"
     
-    case "$typo" in
+    # Check for common typos in apt subcommands
+    case "$apt_cmd" in
         # Common apt update typos
         "updote"|"updat"|"upadte"|"opdate"|"uppdate"|"updte"|"updaet"|"updae"|"updete"|"updait"|"upate"|"upd"|"update-") 
+            typo="$apt_cmd"
             suggestion="update";;
         
         # apt upgrade typos
         "upgrad"|"upgrage"|"upgrde"|"upgarde"|"uprgade"|"uppgrade"|"upgread"|"upgrdae"|"upgad"|"upgrade-"|"opgrade") 
+            typo="$apt_cmd"
             suggestion="upgrade";;
         
         # apt install typos
-        "instlal"|"instal"|"instll"|"insatll"|"isntall"|"intsall"|"instaall"|"intsall"|"isntall"|"isntal"|"innstall"|"installl"|"nistall"|"install-") 
+        "instlal"|"instal"|"instll"|"insatll"|"isntall"|"intsall"|"instaall"|"intsall"|"isntall"|"isntal"|"innstall"|"installl"|"nistall"|"install-"|"instael") 
+            typo="$apt_cmd"
             suggestion="install";;
         
         # apt remove typos
         "remov"|"remeve"|"removr"|"reomve"|"rmove"|"removee"|"romove"|"remove-") 
+            typo="$apt_cmd"
             suggestion="remove";;
     esac
     
+    # If a typo was found, construct the corrected command
     if [ -n "$suggestion" ]; then
-        # Create the corrected command
-        CORRECTED="${COMMAND/$typo/$suggestion}"
+        # Get any remaining arguments
+        remaining_args=""
+        if [ $# -gt 2 ]; then
+            remaining_args=" ${@:3}"
+        fi
+        corrected_command="apt $suggestion$remaining_args"
         
-        # Show suggestion
-        echo -e "${YELLOW}Bonzi Buddy:${NC} Did you mean: ${GREEN}$suggestion${NC}?"
+        # Show suggestion with the bracket style
+        echo -e ""
+        echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}$corrected_command${NC} ${YELLOW}]${NC}"
         
         # Get explanation for the suggested command
-        cmd_for_explanation=$(echo "$suggestion" | awk '{print $1}')
-        explanation=$(get_command_explanation "$cmd_for_explanation")
-        echo -e "${CYAN}ℹ️  $cmd_for_explanation${NC} - $explanation"
+        explanation=$(get_command_explanation "apt")
+        echo -e "${CYAN}ℹ️  apt${NC} - $explanation"
         
-        read -p "Would you like to try the suggested command? (Y/n): " CONFIRM
+        echo -n "Would you like to try the suggested command? (Y/n): "
+        read CONFIRM
         
         if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
-            echo -e "${BLUE}Bonzi Buddy:${NC} Running original command: ${GREEN}sudo $COMMAND${NC}"
+            echo -e "${BLUE}Running:${NC} ${GREEN}sudo $COMMAND${NC}"
             sudo $COMMAND
         else
-            echo -e "${BLUE}Bonzi Buddy:${NC} Running: ${GREEN}sudo $CORRECTED${NC}"
-            sudo $CORRECTED
+            echo -e "${BLUE}Running:${NC} ${GREEN}sudo $corrected_command${NC}"
+            sudo $corrected_command
         fi
     else
         # No suggestion, just run the command
-        echo -e "${BLUE}Bonzi Buddy:${NC} Running: ${GREEN}sudo $COMMAND${NC}"
+        echo -e "${BLUE}Running:${NC} ${GREEN}sudo $COMMAND${NC}"
         sudo $COMMAND
     fi
 else
     # Not an apt command, just run it
-    echo -e "${BLUE}Bonzi Buddy:${NC} Running: ${GREEN}sudo $COMMAND${NC}"
+    echo -e "${BLUE}Running:${NC} ${GREEN}sudo $COMMAND${NC}"
     sudo $COMMAND
 fi
