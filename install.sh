@@ -143,8 +143,30 @@ if [[ "$CURRENT_SHELL" == "zsh" ]]; then
         echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
     fi
     
-    # Install subo wrapper for tab completion
-    echo -e "${BLUE}Installing subo wrapper for tab completion...${NC}"
+    # Create and install proper subo wrapper for tab completion
+    echo -e "${BLUE}Creating subo wrapper for tab completion...${NC}"
+
+    # Create a dynamic wrapper script that uses BONZI_BUDDY_DIR
+    cat > "$SCRIPT_DIR/subo-wrapper" << 'WRAPPEREOF'
+#!/bin/bash
+# Wrapper for subo that uses the environment variable set during installation
+
+# Check if BONZI_BUDDY_DIR is set
+if [ -z "$BONZI_BUDDY_DIR" ]; then
+    echo "Error: BONZI_BUDDY_DIR is not set. Please make sure Bonzi Buddy is properly installed."
+    echo "Try running 'source ~/.zshrc' or reinstalling Bonzi Buddy."
+    exit 1
+fi
+
+# Run subo.sh with all passed arguments
+"$BONZI_BUDDY_DIR/subo.sh" "$@"
+WRAPPEREOF
+
+    # Make the wrapper executable
+    chmod +x "$SCRIPT_DIR/subo-wrapper"
+
+    # Create symbolic link in bin directory
+    echo -e "${BLUE}Installing subo wrapper to ~/bin/subo...${NC}"
     ln -sf "$SCRIPT_DIR/subo-wrapper" ~/bin/subo
     
     # Check if our setup is already in .zshrc
