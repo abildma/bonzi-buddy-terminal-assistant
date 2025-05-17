@@ -159,18 +159,26 @@ if [[ "$1" == "apt" && $# -ge 2 ]]; then
         
         if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
             echo -e "${BLUE}Running:${NC} ${GREEN}sudo $COMMAND${NC}"
-            sudo $COMMAND
+            # Execute commands properly by passing each argument separately
+            sudo "$@"
         else
             echo -e "${BLUE}Running:${NC} ${GREEN}sudo $corrected_command${NC}"
-            sudo $corrected_command
+            # Split the corrected command and execute properly
+            if [ -n "$corrected_command" ]; then
+                # Parse the corrected command into an array
+                corrected_args=($corrected_command)
+                sudo "${corrected_args[@]}"
+            fi
         fi
     else
         # No suggestion, just run the command
         echo -e "${BLUE}Running:${NC} ${GREEN}sudo $COMMAND${NC}"
-        sudo $COMMAND
+        # Execute commands properly by passing each argument separately
+        sudo "$@"
     fi
 else
     # Not an apt command, just run it
     echo -e "${BLUE}Running:${NC} ${GREEN}sudo $COMMAND${NC}"
-    sudo $COMMAND
+    # Execute commands properly by passing each argument separately
+    sudo "$@"
 fi
