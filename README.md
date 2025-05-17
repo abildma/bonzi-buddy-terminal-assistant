@@ -2,14 +2,14 @@
 
 A friendly terminal assistant that helps with command suggestions and corrections.
 
-![Bonzi Buddy Terminal](https://imgur.com/a/638oybF)
+![Screenshot from 2025-05-17 03-13-29](https://github.com/user-attachments/assets/1642d450-f816-4f99-af4e-34b1d2c5c7c6)
+
 
 ## Disclaimer
 
 **This project is NOT affiliated with, endorsed by, or related to the original Bonzi Buddy software from the early 2000s.**
 
 This is an open-source terminal utility that helps correct command typos. Unlike the original Bonzi Buddy which was known for containing spyware/adware, this project:
-- Contains no spyware, adware, or malware of any kind
 - Is completely open-source so you can verify the code yourself
 - Runs locally on your machine without sending any data externally
 - Is solely focused on being a helpful terminal assistant
@@ -27,19 +27,18 @@ The name is used as a nostalgic reference only.
 - **Multi-Shell Support**: Seamless integration with both bash and zsh
 
 ## Quick Installation
+```
+ git clone https://github.com/abildma/bonzi-buddy-terminal-assistant.git
+ cd bonzi-buddy-terminal-assistant
+ chmod +x install.sh && ./install.sh
+ source ~/.bashrc or source ~/.zshrc (if using zsh)
+```
 
-Just run our one-line installer (for bash or zsh):
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/bonzi-buddy.git
-cd bonzi-buddy
-
-# Run the installer
-chmod +x install.sh && ./install.sh
-
-# Reload your shell configuration
-source ~/.bashrc  # or source ~/.zshrc
+## Removal
+```
+ cd bonzi-buddy-terminal-assistant
+ chmod +x .uninstall.sh && ./uninstall.sh
+ source ~/.bashrc or source ~/.zshrc (if using zsh)
 ```
 
 ## Manual Installation
@@ -49,22 +48,22 @@ If you prefer to install manually:
 1. Clone this repository
 2. Make the scripts executable:
    ```bash
-   chmod +x bonzi.sh subo.sh command_not_found.sh bonzi_wrapper.sh zsh_setup.sh
+    chmod +x bonzi.sh subo.sh command_not_found.sh bonzi_wrapper.sh zsh_setup.sh
    ```
 3. Create aliases for easier access:
    ```bash
    # For bash
-   echo "export BONZI_BUDDY_DIR=\"$(pwd)\"" >> ~/.bashrc
-   echo "alias bonzi='$BONZI_BUDDY_DIR/bonzi.sh'" >> ~/.bashrc
-   echo "alias subo='$BONZI_BUDDY_DIR/subo.sh'" >> ~/.bashrc
+    echo "export BONZI_BUDDY_DIR=\"(pwd)\"" >> ~/.bashrc
+    echo "alias bonzi='BONZI_BUDDY_DIR/bonzi.sh'" >> ~/.bashrc
+    echo "alias subo='BONZI_BUDDY_DIR/subo.sh'" >> ~/.bashrc
    
    # For zsh
-   echo "export BONZI_BUDDY_DIR=\"$(pwd)\"" >> ~/.zshrc
-   echo "source \"$BONZI_BUDDY_DIR/zsh_setup.sh\"" >> ~/.zshrc
+    echo "export BONZI_BUDDY_DIR=\"(pwd)\"" >> ~/.zshrc
+    echo "source \"BONZI_BUDDY_DIR/zsh_setup.sh\"" >> ~/.zshrc
    ```
 4. Reload your shell:
    ```bash
-   source ~/.bashrc  # or source ~/.zshrc
+    source ~/.bashrc  # or source ~/.zshrc
    ```
 
 ## Usage
@@ -76,7 +75,7 @@ After installation, Bonzi Buddy works in several powerful ways:
 If you type a non-existent command, Bonzi Buddy will automatically detect it and suggest corrections:
 
 ```bash
-$ lsbkadsa -a
+ lsbkadsa -a
 Bonzi Buddy detected a missing command...
 Bonzi Buddy: Did you mean: lsblk?
 ℹ️  lsblk - Lists information about block devices (storage)
@@ -91,7 +90,7 @@ Bonzi Buddy: Running: lsblk -a
 You can also explicitly run any command through Bonzi Buddy:
 
 ```bash
-$ bonzi sudo apt opdate
+bonzi sudo apt opdate
 Bonzi Buddy is here to help!
 Bonzi Buddy: Did you mean: apt update?
 ℹ️  apt - Advanced package tool for Debian/Ubuntu
@@ -104,7 +103,7 @@ Would you like to try the suggested command? (Y/n):
 Use `subo` for commands that need sudo privileges. It supports full tab completion just like sudo:
 
 ```bash
-$ subo apt updaet
+ subo apt updaet
 Bonzi Buddy: Did you mean: update?
 ℹ️  apt - Advanced package tool for Debian/Ubuntu
 Would you like to try the suggested command? (Y/n): 
