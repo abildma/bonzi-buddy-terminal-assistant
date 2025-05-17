@@ -57,28 +57,43 @@ source ~/.zshrc
 
 ## Manual Installation
 
-If you prefer to install manually:
+If you prefer to set things up manually:
 
-1. Clone this repository
-2. Make the scripts executable:
-   ```bash
-    chmod +x bonzi.sh subo.sh command_not_found.sh bonzi_wrapper.sh zsh_setup.sh
-   ```
-3. Create aliases for easier access:
-   ```bash
-   # For bash
-    echo "export BONZI_BUDDY_DIR=\"(pwd)\"" >> ~/.bashrc
-    echo "alias bonzi='BONZI_BUDDY_DIR/bonzi.sh'" >> ~/.bashrc
-    echo "alias subo='BONZI_BUDDY_DIR/subo.sh'" >> ~/.bashrc
-   
-   # For zsh
-    echo "export BONZI_BUDDY_DIR=\"(pwd)\"" >> ~/.zshrc
-    echo "source \"BONZI_BUDDY_DIR/zsh_setup.sh\"" >> ~/.zshrc
-   ```
-4. Reload your shell:
-   ```bash
-    source ~/.bashrc  # or source ~/.zshrc
-   ```
+1. Clone the repository
+```bash
+git clone https://github.com/abildma/bonzi-buddy-terminal-assistant.git
+cd bonzi-buddy-terminal-assistant
+```
+
+2. Make the scripts executable
+```bash
+chmod +x bonzi.sh command_not_found.sh subo.sh zsh_setup.sh
+```
+
+3. Add Bonzi Buddy to your Zsh configuration
+```bash
+# Add to your ~/.zshrc file
+export BONZI_BUDDY_DIR="/path/to/bonzi-buddy"
+source "$BONZI_BUDDY_DIR/zsh_setup.sh"
+```
+
+4. Set up the command-not-found handler
+```bash
+# For Zsh with Oh-My-Zsh
+if [[ -d ~/.oh-my-zsh/functions ]]; then
+    cp $BONZI_BUDDY_DIR/command_not_found.sh ~/.oh-my-zsh/functions/command_not_found_handler
+    chmod +x ~/.oh-my-zsh/functions/command_not_found_handler
+else
+    # For standard Zsh without Oh-My-Zsh
+    # Create functions directory if it doesn't exist
+    mkdir -p ~/.zsh/functions
+    cp $BONZI_BUDDY_DIR/command_not_found.sh ~/.zsh/functions/command_not_found_handler
+    chmod +x ~/.zsh/functions/command_not_found_handler
+    # Add the function path to fpath in your .zshrc
+    echo 'fpath=(~/.zsh/functions $fpath)' >> ~/.zshrc
+    echo 'autoload -Uz command_not_found_handler' >> ~/.zshrc
+fi
+```
 
 ## Usage
 
@@ -133,6 +148,11 @@ Every suggestion now comes with a brief explanation of what the command does, he
 
 ### Smart Command Detection
 Bonzi Buddy uses intelligent string similarity detection to find the closest matching command in our library of common Linux commands. This means it can detect even heavily mangled typos like `lsbkadsa` → `lsblk` without having to hardcode every possible misspelling.
+
+### Requirements
+- Zsh shell (version 5.0 or higher recommended)
+- Oh-My-Zsh (recommended but not required)
+- Common Linux utilities (`grep`, `sed`, `awk`, `find`)
 
 ### Command Explanations
 The system includes a database of command explanations that helps you understand what each command does when it's suggested.

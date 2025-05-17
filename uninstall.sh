@@ -27,9 +27,13 @@ echo -e "${YELLOW}Bonzi Buddy Uninstaller${NC}"
 echo "This script will remove Bonzi Buddy from your system."
 echo ""
 
-# Detect shell
+# Verify shell is Zsh
 CURRENT_SHELL=$(basename "$SHELL")
 echo -e "${BLUE}Detected shell:${NC} $CURRENT_SHELL"
+
+if [[ "$CURRENT_SHELL" != "zsh" ]]; then
+    echo -e "${YELLOW}Note: Bonzi Buddy is designed for Zsh, but we'll clean up any components.${NC}"
+fi
 
 # Remove modifications from shell config files
 cleanup_shell_config() {
@@ -73,19 +77,27 @@ cleanup_shell_config() {
 }
 
 # Clean up shell config files
-if [[ "$CURRENT_SHELL" == "zsh" ]]; then
-    cleanup_shell_config ~/.zshrc ~/.zshrc.backup.bonzi
-    
-    # Remove command not found handler for zsh
-    if [[ -f ~/.oh-my-zsh/functions/command_not_found_handler ]]; then
-        echo -e "${BLUE}Removing command-not-found handler...${NC}"
-        rm -f ~/.oh-my-zsh/functions/command_not_found_handler
+cleanup_shell_config ~/.zshrc ~/.zshrc.backup.bonzi
+
+# Remove command not found handler for zsh
+if [[ -f ~/.oh-my-zsh/functions/command_not_found_handler ]]; then
+    echo -e "${BLUE}Removing command-not-found handler...${NC}"
+    rm -f ~/.oh-my-zsh/functions/command_not_found_handler
+fi
+
+# Also cleanup any Bash files that might have been created by older versions
+if [[ -f ~/.bashrc ]]; then
+    echo -e "${BLUE}Checking for any Bonzi Buddy entries in .bashrc...${NC}"
+    if grep -q "BONZI_BUDDY_DIR\|bonzi.sh" ~/.bashrc; then
+        cleanup_shell_config ~/.bashrc ~/.bashrc.backup.bonzi
+        echo -e "${GREEN}Removed Bonzi Buddy references from .bashrc${NC}"
     fi
-elif [[ "$CURRENT_SHELL" == "bash" ]]; then
-    cleanup_shell_config ~/.bashrc ~/.bashrc.backup.bonzi
-else
-    echo -e "${YELLOW}Unsupported shell: $CURRENT_SHELL${NC}"
-    echo -e "You may need to manually remove Bonzi Buddy entries from your shell config file."
+fi
+
+# Remove any note file
+if [[ -f ~/.bonzi-buddy-note.txt ]]; then
+    echo -e "${BLUE}Removing note file...${NC}"
+    rm -f ~/.bonzi-buddy-note.txt
 fi
 
 # Remove subo executable from bin

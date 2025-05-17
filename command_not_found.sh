@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/zsh
 
-# Bonzi Buddy Command Not Found Handler
-# This script is called automatically when a command isn't found
+# Bonzi Buddy Command Not Found Handler for Zsh
+# This script is called automatically when a command isn't found in Zsh
 
 # Set colors for a more friendly appearance
 GREEN='\033[0;32m'
