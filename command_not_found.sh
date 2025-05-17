@@ -59,7 +59,8 @@ case "$BASE_CMD" in
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
     if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
-      $CMD_STRING
+      echo -e "${BLUE}Bonzi Buddy:${NC} Command not executed."
+      return 127 # Standard code for command not found
     else
       echo -e "${BLUE}Bonzi Buddy:${NC} Running: ${GREEN}cd ..${NC}"
       cd ..
@@ -74,7 +75,8 @@ case "$BASE_CMD" in
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
     if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
-      $CMD_STRING
+      echo -e "${BLUE}Bonzi Buddy:${NC} Command not executed."
+      return 127 # Standard code for command not found
     else
       echo -e "${BLUE}Bonzi Buddy:${NC} Running: ${GREEN}ls $CMD_ARGS${NC}"
       ls $CMD_ARGS
@@ -91,7 +93,8 @@ case "$BASE_CMD" in
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
     if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
-      $CMD_STRING
+      echo -e "${BLUE}Bonzi Buddy:${NC} Command not executed."
+      return 127 # Standard code for command not found
     else
       echo -e "${BLUE}Bonzi Buddy:${NC} Running: ${GREEN}$corrected $CMD_ARGS${NC}"
       eval "$corrected $CMD_ARGS"
@@ -149,7 +152,8 @@ case "$BASE_CMD" in
       read CONFIRM
       
       if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
-        $CMD_STRING
+        echo -e "${BLUE}Bonzi Buddy:${NC} Command not executed."
+        return 127 # Standard code for command not found
       else
         echo -e "${BLUE}Bonzi Buddy:${NC} Running: ${GREEN}$closest_cmd $CMD_ARGS${NC}"
         eval "$closest_cmd $CMD_ARGS"
