@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Bonzi Buddy - A friendly terminal assistant without the spyware
 # Usage: bonzi.sh [command]

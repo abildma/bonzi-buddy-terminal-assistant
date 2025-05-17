@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Bonzi Buddy Shell Wrapper
 # This script intercepts all commands before execution to check for typos

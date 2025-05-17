@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Subo - A simple script to run commands with sudo and catch typos
 # Usage: subo command [args]

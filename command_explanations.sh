@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Command Explanations for Bonzi Buddy
 # Contains brief explanations of common Linux commands
@@ -262,5 +262,5 @@ get_command_explanation() {
     esac
 }
 
-# Export the function so it can be used by other scripts
-export -f get_command_explanation
+# Make the function available to other scripts
+# (No need to export in Zsh as functions are automatically available after being sourced)
