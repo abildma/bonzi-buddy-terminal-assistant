@@ -132,7 +132,7 @@ case "$BASE_CMD" in
     done
     
     # Simple bracketed style that works reliably across all terminals
-    echo -e "    ${YELLOW}[${NC} ${WHITE}Did you mean:${NC} ${BRIGHT_GREEN}cd ..${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
+    echo -e "    ${YELLOW}[${NC} ${CYAN}Did you mean:${NC} ${BRIGHT_GREEN}cd ..${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
     echo -e "${CYAN}ℹ️  ${BOLD}cd${NC} ${GRAY}-${NC} ${LIGHT_BLUE}$explanation${NC}"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -163,7 +163,7 @@ case "$BASE_CMD" in
     done
     
     # Simple bracketed style that works reliably across all terminals
-    echo -e "    ${YELLOW}[${NC} ${WHITE}Did you mean:${NC} ${BRIGHT_GREEN}ls${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
+    echo -e "    ${YELLOW}[${NC} ${CYAN}Did you mean:${NC} ${BRIGHT_GREEN}ls${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -195,7 +195,7 @@ case "$BASE_CMD" in
     done
     
     # Simple bracketed style that works reliably across all terminals
-    echo -e "    ${YELLOW}[${NC} ${WHITE}Did you mean:${NC} ${BRIGHT_GREEN}$corrected${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
+    echo -e "    ${YELLOW}[${NC} ${CYAN}Did you mean:${NC} ${BRIGHT_GREEN}$corrected${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -267,7 +267,7 @@ case "$BASE_CMD" in
       done
       
       # Simple bracketed style that works reliably across all terminals
-      echo -e "    ${YELLOW}[${NC} ${WHITE}Did you mean:${NC} ${BRIGHT_GREEN}$closest_cmd${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
+      echo -e "    ${YELLOW}[${NC} ${CYAN}Did you mean:${NC} ${BRIGHT_GREEN}$closest_cmd${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
       echo -e "${CYAN}ℹ️  ${BOLD}$closest_cmd${NC} ${GRAY}-${NC} ${LIGHT_BLUE}$explanation${NC}"
       echo -n "Would you like to try the suggested command? (Y/n): "
       read CONFIRM

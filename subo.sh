@@ -136,7 +136,7 @@ if [[ "$1" == "apt" && $# -ge 2 ]]; then
         corrected_cmd=$(echo "$corrected_cmd" | sed 's/^ //')
         
         # Simple bracketed style that works reliably across all terminals
-        echo -e "    ${YELLOW}[${NC} ${WHITE}Did you mean:${NC} ${BRIGHT_GREEN}$corrected_cmd${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
+        echo -e "    ${YELLOW}[${NC} ${CYAN}Did you mean:${NC} ${BRIGHT_GREEN}$corrected_cmd${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
         
         # Get explanation for apt with enhanced styling
         explanation=$(get_command_explanation "apt")
