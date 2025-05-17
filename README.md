@@ -24,21 +24,35 @@ The name is used as a nostalgic reference only.
 - **Tab Completion Support**: Full tab completion for the `subo` command (sudo with typo checking)
 - **Smart Handling of Arguments**: Preserves all command arguments when making corrections
 - **Colorful, Friendly Interface**: Easy-to-read color-coded suggestions and explanations
-- **Multi-Shell Support**: Seamless integration with both bash and zsh
+- **Zsh Integration**: Seamless integration with Zsh shell
 
 ## Quick Installation
-```
- git clone https://github.com/abildma/bonzi-buddy-terminal-assistant.git
- cd bonzi-buddy-terminal-assistant
- chmod +x install.sh && ./install.sh
- source ~/.bashrc or source ~/.zshrc (if using zsh)
+
+> **Note:** Bonzi Buddy currently only supports Zsh. See the [Contributing](#contributing) section if you'd like to help add Bash support!
+
+```bash
+# Clone the repository
+git clone https://github.com/abildma/bonzi-buddy-terminal-assistant.git
+cd bonzi-buddy-terminal-assistant
+
+# Run the installer
+chmod +x install.sh && ./install.sh
+
+# Activate Bonzi Buddy in your current session
+source ~/.zshrc
 ```
 
 ## Removal
-```
- cd bonzi-buddy-terminal-assistant
- chmod +x .uninstall.sh && ./uninstall.sh
- source ~/.bashrc or source ~/.zshrc (if using zsh)
+
+```bash
+# Navigate to the repository directory
+cd bonzi-buddy-terminal-assistant
+
+# Run the uninstaller
+chmod +x uninstall.sh && ./uninstall.sh
+
+# Apply changes to your current session
+source ~/.zshrc
 ```
 
 ## Manual Installation
@@ -133,3 +147,24 @@ You can easily add more commands to the detection system by editing the `COMMON_
 
 ### Extending Command Explanations
 To add explanations for more commands or customize existing ones, edit the `get_command_explanation()` function in `command_explanations.sh`.
+
+## Contributing
+
+Contributions are welcome! Here are some ways you can help improve Bonzi Buddy:
+
+### Priority: Bash Support
+We're looking for contributors who can help improve Bash shell integration. The current implementation works with explicit commands, but we'd love to have full command-not-found handler support working reliably across different Bash versions and distributions.
+
+### Other Contribution Ideas
+- Add support for more commands in the detection system
+- Improve typo detection algorithm
+- Add more detailed command explanations
+- Create themes or customization options
+- Add support for other shells (fish, etc.)
+
+To contribute:
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
