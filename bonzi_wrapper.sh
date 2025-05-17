@@ -10,8 +10,14 @@ BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
-# Get the directory of this script
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+# Get the directory of this script - Zsh compatible version
+# First try BASH_SOURCE for backward compatibility
+if [[ -n "${BASH_SOURCE[0]}" ]]; then
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+else
+    # If BASH_SOURCE is not available (Zsh), use $0 instead
+    SCRIPT_DIR="$( cd "$( dirname "$0" )" &> /dev/null && pwd )"
+fi
 
 # First, handle the command-not-found case
 command_not_found_handler() {

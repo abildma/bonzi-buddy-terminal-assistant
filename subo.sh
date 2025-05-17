@@ -12,11 +12,44 @@ CYAN='\033[0;36m'
 PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
-# Get the directory of this script
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+# Get the directory of this script - Zsh compatible version
+# First try BASH_SOURCE for backward compatibility
+if [[ -n "${BASH_SOURCE[0]}" ]]; then
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+else
+    # If BASH_SOURCE is not available (Zsh), use $0 instead
+    SCRIPT_DIR="$( cd "$( dirname "$0" )" &> /dev/null && pwd )"
+fi
 
 # Source the command explanations
-source "$SCRIPT_DIR/command_explanations.sh"
+if [ -f "$SCRIPT_DIR/command_explanations.sh" ]; then
+    source "$SCRIPT_DIR/command_explanations.sh"
+else
+    # Define a simple fallback explanation function
+    get_command_explanation() {
+        local cmd=$1
+        case "$cmd" in
+            "ls") echo "Lists directory contents" ;;
+            "cd") echo "Change directory" ;;
+            "mkdir") echo "Make directory" ;;
+            "rm") echo "Remove files or directories" ;;
+            "cp") echo "Copy files or directories" ;;
+            "mv") echo "Move files or directories" ;;
+            "cat") echo "Display file contents" ;;
+            "grep") echo "Search for patterns in files" ;;
+            "find") echo "Search for files in a directory hierarchy" ;;
+            "apt") echo "Package manager for Debian/Ubuntu" ;;
+            "apt-get") echo "Package manager for Debian/Ubuntu" ;;
+            "yum") echo "Package manager for RHEL/CentOS/Fedora" ;;
+            "dnf") echo "Package manager for Fedora" ;;
+            "pacman") echo "Package manager for Arch Linux" ;;
+            "ping") echo "Test network connectivity" ;;
+            "ssh") echo "Secure shell remote login" ;;
+            "scp") echo "Secure copy files between hosts" ;;
+            *) echo "Command details not available" ;;
+        esac
+    }
+fi
 
 # Function to suggest corrections for common command typos
 suggest_correction() {
