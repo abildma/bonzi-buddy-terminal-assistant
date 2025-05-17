@@ -50,38 +50,47 @@ command_not_found_handler() {
     return $?
 }
 
-# Set up autocompletion for subo command
-_subo_completion() {
-    "$BONZI_BUDDY_DIR/subo_completion.zsh" "$@"
-    return $?
-}
+# Simple compatibility-focused completion setup
+echo -e "${BLUE}Setting up simplified tab completion for commands...${NC}"
 
-# Initialize the completion system if we're in Zsh
-if [ -n "$ZSH_VERSION" ]; then
-    echo -e "${BLUE}Initializing Zsh completion system...${NC}"
+# Source the simpler completion script
+if [ -f "$SCRIPT_DIR/simple_subo_completion.sh" ]; then
+    source "$SCRIPT_DIR/simple_subo_completion.sh"
     
-    # Create Zsh completion directories if they don't exist
-    mkdir -p ~/.zsh/completion 2>/dev/null
-    
-    # Set up fpath if needed
-    if [[ -z "$(echo $fpath | grep "$BONZI_BUDDY_DIR")" ]]; then
-        fpath=("$BONZI_BUDDY_DIR" ~/.zsh/completion $fpath)
+    # Set up a basic completion function for Zsh
+    if [ -n "$ZSH_VERSION" ]; then
+        # Define a simpler completion function for Zsh
+        _subo_basic_completion() {
+            local cmd="$1"
+            local subcmd="$2"
+            local cur="$3"
+            
+            if [[ -z "$cmd" || "$cmd" = "subo" ]]; then
+                # First level completion
+                reply=(apt apt-get systemctl service docker cp mv rm nano vim cat less grep find)
+                return 0
+            elif [[ "$cmd" = "apt" ]]; then
+                # Second level completion for apt
+                reply=(update upgrade install remove purge autoremove dist-upgrade full-upgrade list search show clean autoclean)
+                return 0
+            fi
+            
+            # Default to files
+            _files
+        }
+        
+        # Register with Zsh
+        compdef _subo_basic_completion subo
+        
+        echo -e "${GREEN}Basic tab completion for subo is enabled.${NC}"
+    elif [ -n "$BASH_VERSION" ]; then
+        # Bash completion was already set up in the sourced script
+        echo -e "${GREEN}Bash tab completion for subo is enabled.${NC}"
+    else
+        echo -e "${YELLOW}Unknown shell type. Tab completion might not work.${NC}"
     fi
-    
-    # Copy the completion file to a standard location
-    cp "$BONZI_BUDDY_DIR/subo_completion.zsh" ~/.zsh/completion/_subo 2>/dev/null
-    
-    # Force initialize the completion system
-    autoload -Uz compinit
-    compinit
-    
-    # Register our completion function
-    compdef _subo_completion subo
-    
-    echo -e "${GREEN}Tab completion for subo command is now enabled.${NC}"
 else
-    echo -e "${YELLOW}Non-Zsh shell detected. Subo tab completion will not work.${NC}"
-    echo -e "${YELLOW}Please use Zsh for the full Bonzi Buddy experience.${NC}"
+    echo -e "${YELLOW}Could not find simple_subo_completion.sh. Tab completion will not work.${NC}"
 fi
 
 echo -e "${GREEN}Bonzi Buddy has been activated for this terminal session!${NC}"
