@@ -137,22 +137,9 @@ elif [[ "$CURRENT_SHELL" == "bash" ]]; then
     ln -sf "$SCRIPT_DIR/subo-wrapper" ~/bin/subo
     chmod +x ~/bin/subo
     
-    # Create a command-not-found handler directory if it doesn't exist
-    if [ ! -d /usr/lib/command-not-found ]; then
-        echo -e "${YELLOW}Setting up command-not-found directory...${NC}"
-        sudo mkdir -p /usr/lib/command-not-found 2>/dev/null || mkdir -p ~/.local/command-not-found
-    fi
-    
-    # Try to set up the command-not-found handler
-    if [ -d /usr/lib/command-not-found ] && [ -w /usr/lib/command-not-found ]; then
-        echo -e "${BLUE}Setting up system-wide command-not-found handler...${NC}"
-        sudo cp "$SCRIPT_DIR/command_not_found.sh" /usr/lib/command-not-found/bonzi_handler 2>/dev/null
-        sudo chmod +x /usr/lib/command-not-found/bonzi_handler 2>/dev/null
-    elif [ -d ~/.local/command-not-found ]; then
-        echo -e "${BLUE}Setting up user command-not-found handler...${NC}"
-        cp "$SCRIPT_DIR/command_not_found.sh" ~/.local/command-not-found/bonzi_handler
-        chmod +x ~/.local/command-not-found/bonzi_handler
-    fi
+    # Set up the Bash-specific command-not-found handler
+    echo -e "${BLUE}Setting up Bash command-not-found handler...${NC}"
+    "$SCRIPT_DIR/bash_command_not_found.sh"
     
     # Add Bonzi Buddy to .bashrc
     echo -e "${GREEN}Adding Bonzi Buddy to your .bashrc...${NC}"
@@ -175,11 +162,7 @@ fi
 # Load subo command completion
 source "$SCRIPT_DIR/subo_completion.bash"
 
-# Function to handle command not found (used as a fallback)
-command_not_found_handle() {
-    "$SCRIPT_DIR/command_not_found.sh" "\$@"
-    return \$?
-}
+# Command-not-found handler is now set up by bash_command_not_found.sh
 
 # Function to check commands before executing
 bonzi_preexec() {
