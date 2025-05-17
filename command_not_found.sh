@@ -131,10 +131,8 @@ case "$BASE_CMD" in
       spaces="$spaces "
     done
     
-    # Enhanced suggestion style with better visual hierarchy
-    echo -e "    ${YELLOW}┌──${WHITE} Suggestion ${YELLOW}──────────────┐${NC}"
-    echo -e "    ${YELLOW}│${NC}  Did you mean: ${BRIGHT_GREEN}cd ..${NC}${GRAY}?${NC}      ${YELLOW}│${NC}"
-    echo -e "    ${YELLOW}└─────────────────────────────┘${NC}"
+    # Simple bracketed style that works reliably across all terminals
+    echo -e "    ${YELLOW}[${NC} ${WHITE}Did you mean:${NC} ${BRIGHT_GREEN}cd ..${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
     echo -e "${CYAN}ℹ️  ${BOLD}cd${NC} ${GRAY}-${NC} ${LIGHT_BLUE}$explanation${NC}"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -164,10 +162,8 @@ case "$BASE_CMD" in
       spaces="$spaces "
     done
     
-    # Enhanced suggestion style with better visual hierarchy
-    echo -e "    ${YELLOW}┌──${WHITE} Suggestion ${YELLOW}──────────────┐${NC}"
-    echo -e "    ${YELLOW}│${NC}  Did you mean: ${BRIGHT_GREEN}ls${NC}${GRAY}?${NC}          ${YELLOW}│${NC}"
-    echo -e "    ${YELLOW}└─────────────────────────────┘${NC}"
+    # Simple bracketed style that works reliably across all terminals
+    echo -e "    ${YELLOW}[${NC} ${WHITE}Did you mean:${NC} ${BRIGHT_GREEN}ls${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -198,10 +194,8 @@ case "$BASE_CMD" in
       spaces="$spaces "
     done
     
-    # Enhanced suggestion style with better visual hierarchy
-    echo -e "    ${YELLOW}┌──${WHITE} Suggestion ${YELLOW}──────────────┐${NC}"
-    echo -e "    ${YELLOW}│${NC}  Did you mean: ${BRIGHT_GREEN}$corrected${NC}${GRAY}?${NC}      ${YELLOW}│${NC}"
-    echo -e "    ${YELLOW}└─────────────────────────────┘${NC}"
+    # Simple bracketed style that works reliably across all terminals
+    echo -e "    ${YELLOW}[${NC} ${WHITE}Did you mean:${NC} ${BRIGHT_GREEN}$corrected${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -209,9 +203,7 @@ case "$BASE_CMD" in
       echo -e "${BLUE}Command not executed.${NC}"
       return 127 # Standard code for command not found
     else
-      echo -e "${GRAY}┌──${WHITE} Executing ${GRAY}──────────────┐${NC}"
-      echo -e "${GRAY}│${NC} ${BLUE}Running:${NC} ${BRIGHT_GREEN}$corrected${NC}      ${GRAY}│${NC}"
-      echo -e "${GRAY}└─────────────────────────────┘${NC}"
+      echo -e "${BLUE}Running:${NC} ${BRIGHT_GREEN}$corrected${NC}"
       eval "$corrected $CMD_ARGS"
     fi
     exit $?
@@ -274,23 +266,17 @@ case "$BASE_CMD" in
         spaces="$spaces "
       done
       
-      # Enhanced suggestion style with better visual hierarchy
-      echo -e "    ${YELLOW}┌──${WHITE} Suggestion ${YELLOW}──────────────┐${NC}"
-      echo -e "    ${YELLOW}│${NC}  Did you mean: ${BRIGHT_GREEN}$closest_cmd${NC}${GRAY}?${NC}      ${YELLOW}│${NC}"
-      echo -e "    ${YELLOW}└─────────────────────────────┘${NC}"
+      # Simple bracketed style that works reliably across all terminals
+      echo -e "    ${YELLOW}[${NC} ${WHITE}Did you mean:${NC} ${BRIGHT_GREEN}$closest_cmd${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
       echo -e "${CYAN}ℹ️  ${BOLD}$closest_cmd${NC} ${GRAY}-${NC} ${LIGHT_BLUE}$explanation${NC}"
       echo -n "Would you like to try the suggested command? (Y/n): "
       read CONFIRM
       
       if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
-        echo -e "${GRAY}┌──${WHITE} Result ${GRAY}──────────────┐${NC}"
-        echo -e "${GRAY}│${NC} ${BLUE}Command not executed.${NC}      ${GRAY}│${NC}"
-        echo -e "${GRAY}└─────────────────────────────┘${NC}"
+        echo -e "${RED}Command not executed.${NC}"
         return 127 # Standard code for command not found
       else
-        echo -e "${GRAY}┌──${WHITE} Executing ${GRAY}──────────────┐${NC}"
-        echo -e "${GRAY}│${NC} ${BLUE}Running:${NC} ${BRIGHT_GREEN}$closest_cmd $CMD_ARGS${NC}      ${GRAY}│${NC}"
-        echo -e "${GRAY}└─────────────────────────────┘${NC}"
+        echo -e "${BLUE}Running:${NC} ${BRIGHT_GREEN}$closest_cmd $CMD_ARGS${NC}"
         eval "$closest_cmd $CMD_ARGS"
       fi
       exit $?

@@ -135,10 +135,8 @@ if [[ "$1" == "apt" && $# -ge 2 ]]; then
         done
         corrected_cmd=$(echo "$corrected_cmd" | sed 's/^ //')
         
-        # Show suggestion with enhanced visual styling
-        echo -e "    ${YELLOW}┌──${WHITE} Suggestion ${YELLOW}──────────────┐${NC}"
-        echo -e "    ${YELLOW}│${NC}  Did you mean: ${BRIGHT_GREEN}$corrected_cmd${NC}${GRAY}?${NC}  ${YELLOW}│${NC}"
-        echo -e "    ${YELLOW}└─────────────────────────────┘${NC}"
+        # Simple bracketed style that works reliably across all terminals
+        echo -e "    ${YELLOW}[${NC} ${WHITE}Did you mean:${NC} ${BRIGHT_GREEN}$corrected_cmd${NC}${GRAY}?${NC} ${YELLOW}]${NC}"
         
         # Get explanation for apt with enhanced styling
         explanation=$(get_command_explanation "apt")
@@ -149,28 +147,20 @@ if [[ "$1" == "apt" && $# -ge 2 ]]; then
         
         if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
             # Run original command with all arguments
-            echo -e "${GRAY}┌──${WHITE} Executing ${GRAY}──────────────┐${NC}"
-            echo -e "${GRAY}│${NC} ${BLUE}Running:${NC} ${BRIGHT_GREEN}sudo $@${NC} ${GRAY}│${NC}"
-            echo -e "${GRAY}└────────────────────────────┘${NC}"
+            echo -e "${BLUE}Running:${NC} ${BRIGHT_GREEN}sudo $@${NC}"
             exec sudo "$@"
         else
             # Run corrected command
-            echo -e "${GRAY}┌──${WHITE} Executing ${GRAY}──────────────┐${NC}"
-            echo -e "${GRAY}│${NC} ${BLUE}Running:${NC} ${BRIGHT_GREEN}sudo $corrected_cmd${NC} ${GRAY}│${NC}"
-            echo -e "${GRAY}└────────────────────────────┘${NC}"
+            echo -e "${BLUE}Running:${NC} ${BRIGHT_GREEN}sudo $corrected_cmd${NC}"
             exec sudo "${corrected_args[@]}"
         fi
     else
         # No typo, run command as-is
-        echo -e "${GRAY}┌──${WHITE} Executing ${GRAY}──────────────┐${NC}"
-        echo -e "${GRAY}│${NC} ${BLUE}Running:${NC} ${BRIGHT_GREEN}sudo $@${NC} ${GRAY}│${NC}"
-        echo -e "${GRAY}└────────────────────────────┘${NC}"
+        echo -e "${BLUE}Running:${NC} ${BRIGHT_GREEN}sudo $@${NC}"
         exec sudo "$@"
     fi
 else
     # Not an apt command or not enough arguments, run as-is
-    echo -e "${GRAY}┌──${WHITE} Executing ${GRAY}──────────────┐${NC}"
-    echo -e "${GRAY}│${NC} ${BLUE}Running:${NC} ${BRIGHT_GREEN}sudo $@${NC} ${GRAY}│${NC}"
-    echo -e "${GRAY}└────────────────────────────┘${NC}"
+    echo -e "${BLUE}Running:${NC} ${BRIGHT_GREEN}sudo $@${NC}"
     exec sudo "$@"
 fi
