@@ -122,9 +122,9 @@ case "$BASE_CMD" in
       spaces="$spaces "
     done
     
-    echo -e "    ${YELLOW}+---------------------------+${NC}"
-    echo -e "    ${YELLOW}|${NC}  Did you mean: ${GREEN}cd ..${NC}$spaces${YELLOW}|${NC}"
-    echo -e "    ${YELLOW}+---------------------------+${NC}"
+    # Use simple, reliable bracket style
+    echo -e ""
+    echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}cd ..${NC} ${YELLOW}]${NC}"
     echo -e "${CYAN}ℹ️  cd${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -154,9 +154,9 @@ case "$BASE_CMD" in
       spaces="$spaces "
     done
     
-    echo -e "    ${YELLOW}+---------------------------+${NC}"
-    echo -e "    ${YELLOW}|${NC}  Did you mean: ${GREEN}ls${NC}$spaces${YELLOW}|${NC}"
-    echo -e "    ${YELLOW}+---------------------------+${NC}"
+    # Use simple, reliable bracket style
+    echo -e ""
+    echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}ls${NC} ${YELLOW}]${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -187,9 +187,9 @@ case "$BASE_CMD" in
       spaces="$spaces "
     done
     
-    echo -e "    ${YELLOW}+---------------------------+${NC}"
-    echo -e "    ${YELLOW}|${NC}  Did you mean: ${GREEN}$corrected${NC}$spaces${YELLOW}|${NC}"
-    echo -e "    ${YELLOW}+---------------------------+${NC}"
+    # Use simple, reliable bracket style
+    echo -e ""
+    echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}$corrected${NC} ${YELLOW}]${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -260,9 +260,9 @@ case "$BASE_CMD" in
         spaces="$spaces "
       done
       
-      echo -e "    ${YELLOW}+---------------------------+${NC}"
-      echo -e "    ${YELLOW}|${NC}  Did you mean: ${GREEN}$closest_cmd${NC}$spaces${YELLOW}|${NC}"
-      echo -e "    ${YELLOW}+---------------------------+${NC}"
+      # Use simple, reliable bracket style
+      echo -e ""
+      echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}$closest_cmd${NC} ${YELLOW}]${NC}"
       echo -e "${CYAN}ℹ️  $closest_cmd${NC} - $explanation"
       echo -n "Would you like to try the suggested command? (Y/n): "
       read CONFIRM
