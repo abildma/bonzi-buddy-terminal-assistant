@@ -72,8 +72,8 @@ else
 fi
 
 # Display the initial message - keep this one with Bonzi Buddy name for branding
-echo -e "${PURPLE}Bonzi Buddy${NC} detected a ${YELLOW}missing command${NC}..."
-
+echo -e -n "${PURPLE}Bonzi Buddy${NC} detected a ${YELLOW}missing command${NC}... "
+# No blank line - keep output compact
 # Get the full command string and the command name
 CMD_STRING="$@"
 CMD_NAME="$1"
@@ -122,8 +122,7 @@ case "$BASE_CMD" in
       spaces="$spaces "
     done
     
-    # Use simple, reliable bracket style
-    echo -e ""
+    # Use simple, reliable bracket style without extra spacing
     echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}cd ..${NC} ${YELLOW}]${NC}"
     echo -e "${CYAN}ℹ️  cd${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
@@ -154,8 +153,7 @@ case "$BASE_CMD" in
       spaces="$spaces "
     done
     
-    # Use simple, reliable bracket style
-    echo -e ""
+    # Use simple, reliable bracket style without extra spacing
     echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}ls${NC} ${YELLOW}]${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
@@ -187,8 +185,7 @@ case "$BASE_CMD" in
       spaces="$spaces "
     done
     
-    # Use simple, reliable bracket style
-    echo -e ""
+    # Use simple, reliable bracket style without extra spacing
     echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}$corrected${NC} ${YELLOW}]${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
@@ -260,8 +257,7 @@ case "$BASE_CMD" in
         spaces="$spaces "
       done
       
-      # Use simple, reliable bracket style
-      echo -e ""
+      # Use simple, reliable bracket style without extra spacing
       echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}$closest_cmd${NC} ${YELLOW}]${NC}"
       echo -e "${CYAN}ℹ️  $closest_cmd${NC} - $explanation"
       echo -n "Would you like to try the suggested command? (Y/n): "
