@@ -2,7 +2,7 @@
 
 A friendly terminal assistant that helps with command suggestions and corrections.
 
-![Bonzi Buddy Terminal](https://i.imgur.com/7qVZeMj.png)
+![Bonzi Buddy Terminal](https://imgur.com/a/638oybF)
 
 ## Disclaimer
 
