@@ -4,13 +4,22 @@
 # Usage: subo command [args]
 # Example: subo apt update
 
-# Set colors for a more friendly appearance
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-PURPLE='\033[0;35m'
-NC='\033[0m' # No Color
+# Enhanced color palette for a more appealing appearance
+GREEN='\033[0;32m'       # Success, commands
+BRIGHT_GREEN='\033[1;32m' # Highlighted commands
+YELLOW='\033[1;33m'      # Warnings, suggestions
+BLUE='\033[0;34m'        # Information
+LIGHT_BLUE='\033[0;94m'  # Secondary information
+CYAN='\033[0;36m'        # Command descriptions
+MAGENTA='\033[0;35m'     # Command highlights
+PURPLE='\033[0;35m'      # Bonzi branding
+BRIGHT_PURPLE='\033[1;35m' # Enhanced branding
+RED='\033[0;31m'         # Errors
+GRAY='\033[0;90m'        # Subtle information
+WHITE='\033[1;37m'       # Highlighted text
+BOLD='\033[1m'           # Bold text
+UNDERLINE='\033[4m'      # Underlined text
+NC='\033[0m'             # No Color (reset)
 
 # Get the directory of this script - Zsh compatible version
 # First try BASH_SOURCE for backward compatibility
@@ -59,8 +68,8 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-# Display a welcome message
-echo -e "${PURPLE}Subo:${NC} Running command with ${GREEN}sudo${NC}"
+# Display an enhanced welcome message
+echo -e "${BRIGHT_PURPLE}Subo:${NC} ${GRAY}Running command with${NC} ${BRIGHT_GREEN}sudo${NC}"
 
 # Check for typos in the command if it's an apt command
 if [[ "$1" == "apt" && $# -ge 2 ]]; then
@@ -126,33 +135,42 @@ if [[ "$1" == "apt" && $# -ge 2 ]]; then
         done
         corrected_cmd=$(echo "$corrected_cmd" | sed 's/^ //')
         
-        # Show suggestion with bracket style
-        echo -e ""
-        echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}$corrected_cmd${NC} ${YELLOW}]${NC}"
+        # Show suggestion with enhanced visual styling
+        echo -e "    ${YELLOW}┌──${WHITE} Suggestion ${YELLOW}──────────────┐${NC}"
+        echo -e "    ${YELLOW}│${NC}  Did you mean: ${BRIGHT_GREEN}$corrected_cmd${NC}${GRAY}?${NC}  ${YELLOW}│${NC}"
+        echo -e "    ${YELLOW}└─────────────────────────────┘${NC}"
         
-        # Get explanation for apt
+        # Get explanation for apt with enhanced styling
         explanation=$(get_command_explanation "apt")
-        echo -e "${CYAN}ℹ️  apt${NC} - $explanation"
+        echo -e "${CYAN}ℹ️  ${BOLD}apt${NC} ${GRAY}-${NC} ${LIGHT_BLUE}$explanation${NC}"
         
         echo -n "Would you like to try the suggested command? (Y/n): "
         read CONFIRM
         
         if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
             # Run original command with all arguments
-            echo -e "${BLUE}Running:${NC} ${GREEN}sudo $@${NC}"
+            echo -e "${GRAY}┌──${WHITE} Executing ${GRAY}──────────────┐${NC}"
+            echo -e "${GRAY}│${NC} ${BLUE}Running:${NC} ${BRIGHT_GREEN}sudo $@${NC} ${GRAY}│${NC}"
+            echo -e "${GRAY}└────────────────────────────┘${NC}"
             exec sudo "$@"
         else
             # Run corrected command
-            echo -e "${BLUE}Running:${NC} ${GREEN}sudo $corrected_cmd${NC}"
+            echo -e "${GRAY}┌──${WHITE} Executing ${GRAY}──────────────┐${NC}"
+            echo -e "${GRAY}│${NC} ${BLUE}Running:${NC} ${BRIGHT_GREEN}sudo $corrected_cmd${NC} ${GRAY}│${NC}"
+            echo -e "${GRAY}└────────────────────────────┘${NC}"
             exec sudo "${corrected_args[@]}"
         fi
     else
         # No typo, run command as-is
-        echo -e "${BLUE}Running:${NC} ${GREEN}sudo $@${NC}"
+        echo -e "${GRAY}┌──${WHITE} Executing ${GRAY}──────────────┐${NC}"
+        echo -e "${GRAY}│${NC} ${BLUE}Running:${NC} ${BRIGHT_GREEN}sudo $@${NC} ${GRAY}│${NC}"
+        echo -e "${GRAY}└────────────────────────────┘${NC}"
         exec sudo "$@"
     fi
 else
     # Not an apt command or not enough arguments, run as-is
-    echo -e "${BLUE}Running:${NC} ${GREEN}sudo $@${NC}"
+    echo -e "${GRAY}┌──${WHITE} Executing ${GRAY}──────────────┐${NC}"
+    echo -e "${GRAY}│${NC} ${BLUE}Running:${NC} ${BRIGHT_GREEN}sudo $@${NC} ${GRAY}│${NC}"
+    echo -e "${GRAY}└────────────────────────────┘${NC}"
     exec sudo "$@"
 fi

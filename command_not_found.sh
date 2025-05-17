@@ -3,13 +3,22 @@
 # Bonzi Buddy Command Not Found Handler for Zsh
 # This script is called automatically when a command isn't found in Zsh
 
-# Set colors for a more friendly appearance
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-CYAN='\033[0;36m'
-NC='\033[0m' # No Color
+# Enhanced color palette for a more appealing appearance
+GREEN='\033[0;32m'       # Success, commands
+BRIGHT_GREEN='\033[1;32m' # Highlighted commands
+YELLOW='\033[1;33m'      # Warnings, suggestions
+BLUE='\033[0;34m'        # Information
+LIGHT_BLUE='\033[0;94m'  # Secondary information
+CYAN='\033[0;36m'        # Command descriptions
+MAGENTA='\033[0;35m'     # Command highlights
+PURPLE='\033[0;35m'      # Bonzi branding
+BRIGHT_PURPLE='\033[1;35m' # Enhanced branding
+RED='\033[0;31m'         # Errors
+GRAY='\033[0;90m'        # Subtle information
+WHITE='\033[1;37m'       # Highlighted text
+BOLD='\033[1m'           # Bold text
+UNDERLINE='\033[4m'      # Underlined text
+NC='\033[0m'             # No Color (reset)
 
 # Get the directory of this script - fix for Zsh compatibility
 if [ -n "${BASH_SOURCE[0]}" ]; then
@@ -71,8 +80,8 @@ else
     }
 fi
 
-# Display the initial message - keep this one with Bonzi Buddy name for branding
-echo -e -n "${PURPLE}Bonzi Buddy${NC} detected a ${YELLOW}missing command${NC}... "
+# Display the initial message with enhanced branding
+echo -e "${BRIGHT_PURPLE}Bonzi Buddy${NC} ${GRAY}detected a${NC} ${YELLOW}missing command${NC}${GRAY}...${NC}"
 # No blank line - keep output compact
 # Get the full command string and the command name
 CMD_STRING="$@"
@@ -122,9 +131,11 @@ case "$BASE_CMD" in
       spaces="$spaces "
     done
     
-    # Use simple, reliable bracket style without extra spacing
-    echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}cd ..${NC} ${YELLOW}]${NC}"
-    echo -e "${CYAN}ℹ️  cd${NC} - $explanation"
+    # Enhanced suggestion style with better visual hierarchy
+    echo -e "    ${YELLOW}┌──${WHITE} Suggestion ${YELLOW}──────────────┐${NC}"
+    echo -e "    ${YELLOW}│${NC}  Did you mean: ${BRIGHT_GREEN}cd ..${NC}${GRAY}?${NC}      ${YELLOW}│${NC}"
+    echo -e "    ${YELLOW}└─────────────────────────────┘${NC}"
+    echo -e "${CYAN}ℹ️  ${BOLD}cd${NC} ${GRAY}-${NC} ${LIGHT_BLUE}$explanation${NC}"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
     if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
@@ -153,8 +164,10 @@ case "$BASE_CMD" in
       spaces="$spaces "
     done
     
-    # Use simple, reliable bracket style without extra spacing
-    echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}ls${NC} ${YELLOW}]${NC}"
+    # Enhanced suggestion style with better visual hierarchy
+    echo -e "    ${YELLOW}┌──${WHITE} Suggestion ${YELLOW}──────────────┐${NC}"
+    echo -e "    ${YELLOW}│${NC}  Did you mean: ${BRIGHT_GREEN}ls${NC}${GRAY}?${NC}          ${YELLOW}│${NC}"
+    echo -e "    ${YELLOW}└─────────────────────────────┘${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -167,7 +180,7 @@ case "$BASE_CMD" in
     fi
     exit $?
     ;;
-
+    
   "ls-"*)
     # Handle ls-la, ls-l, etc.
     corrected="ls ${BASE_CMD#ls-}"
@@ -185,8 +198,10 @@ case "$BASE_CMD" in
       spaces="$spaces "
     done
     
-    # Use simple, reliable bracket style without extra spacing
-    echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}$corrected${NC} ${YELLOW}]${NC}"
+    # Enhanced suggestion style with better visual hierarchy
+    echo -e "    ${YELLOW}┌──${WHITE} Suggestion ${YELLOW}──────────────┐${NC}"
+    echo -e "    ${YELLOW}│${NC}  Did you mean: ${BRIGHT_GREEN}$corrected${NC}${GRAY}?${NC}      ${YELLOW}│${NC}"
+    echo -e "    ${YELLOW}└─────────────────────────────┘${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -194,7 +209,9 @@ case "$BASE_CMD" in
       echo -e "${BLUE}Command not executed.${NC}"
       return 127 # Standard code for command not found
     else
-      echo -e "${BLUE}Running:${NC} ${GREEN}$corrected $CMD_ARGS${NC}"
+      echo -e "${GRAY}┌──${WHITE} Executing ${GRAY}──────────────┐${NC}"
+      echo -e "${GRAY}│${NC} ${BLUE}Running:${NC} ${BRIGHT_GREEN}$corrected${NC}      ${GRAY}│${NC}"
+      echo -e "${GRAY}└─────────────────────────────┘${NC}"
       eval "$corrected $CMD_ARGS"
     fi
     exit $?
@@ -257,17 +274,23 @@ case "$BASE_CMD" in
         spaces="$spaces "
       done
       
-      # Use simple, reliable bracket style without extra spacing
-      echo -e "    ${YELLOW}[${NC} Did you mean: ${GREEN}$closest_cmd${NC} ${YELLOW}]${NC}"
-      echo -e "${CYAN}ℹ️  $closest_cmd${NC} - $explanation"
+      # Enhanced suggestion style with better visual hierarchy
+      echo -e "    ${YELLOW}┌──${WHITE} Suggestion ${YELLOW}──────────────┐${NC}"
+      echo -e "    ${YELLOW}│${NC}  Did you mean: ${BRIGHT_GREEN}$closest_cmd${NC}${GRAY}?${NC}      ${YELLOW}│${NC}"
+      echo -e "    ${YELLOW}└─────────────────────────────┘${NC}"
+      echo -e "${CYAN}ℹ️  ${BOLD}$closest_cmd${NC} ${GRAY}-${NC} ${LIGHT_BLUE}$explanation${NC}"
       echo -n "Would you like to try the suggested command? (Y/n): "
       read CONFIRM
       
       if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
-        echo -e "${BLUE}Command not executed.${NC}"
+        echo -e "${GRAY}┌──${WHITE} Result ${GRAY}──────────────┐${NC}"
+        echo -e "${GRAY}│${NC} ${BLUE}Command not executed.${NC}      ${GRAY}│${NC}"
+        echo -e "${GRAY}└─────────────────────────────┘${NC}"
         return 127 # Standard code for command not found
       else
-        echo -e "${BLUE}Running:${NC} ${GREEN}$closest_cmd $CMD_ARGS${NC}"
+        echo -e "${GRAY}┌──${WHITE} Executing ${GRAY}──────────────┐${NC}"
+        echo -e "${GRAY}│${NC} ${BLUE}Running:${NC} ${BRIGHT_GREEN}$closest_cmd $CMD_ARGS${NC}      ${GRAY}│${NC}"
+        echo -e "${GRAY}└─────────────────────────────┘${NC}"
         eval "$closest_cmd $CMD_ARGS"
       fi
       exit $?
