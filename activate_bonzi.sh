@@ -50,6 +50,40 @@ command_not_found_handler() {
     return $?
 }
 
+# Set up autocompletion for subo command
+_subo_completion() {
+    "$BONZI_BUDDY_DIR/subo_completion.zsh" "$@"
+    return $?
+}
+
+# Initialize the completion system if we're in Zsh
+if [ -n "$ZSH_VERSION" ]; then
+    echo -e "${BLUE}Initializing Zsh completion system...${NC}"
+    
+    # Create Zsh completion directories if they don't exist
+    mkdir -p ~/.zsh/completion 2>/dev/null
+    
+    # Set up fpath if needed
+    if [[ -z "$(echo $fpath | grep "$BONZI_BUDDY_DIR")" ]]; then
+        fpath=("$BONZI_BUDDY_DIR" ~/.zsh/completion $fpath)
+    fi
+    
+    # Copy the completion file to a standard location
+    cp "$BONZI_BUDDY_DIR/subo_completion.zsh" ~/.zsh/completion/_subo 2>/dev/null
+    
+    # Force initialize the completion system
+    autoload -Uz compinit
+    compinit
+    
+    # Register our completion function
+    compdef _subo_completion subo
+    
+    echo -e "${GREEN}Tab completion for subo command is now enabled.${NC}"
+else
+    echo -e "${YELLOW}Non-Zsh shell detected. Subo tab completion will not work.${NC}"
+    echo -e "${YELLOW}Please use Zsh for the full Bonzi Buddy experience.${NC}"
+fi
+
 echo -e "${GREEN}Bonzi Buddy has been activated for this terminal session!${NC}"
 echo -e "${CYAN}You can now use the ${YELLOW}subo${CYAN} and ${YELLOW}bonzi${CYAN} commands.${NC}"
 echo -e "${BLUE}Also, command-not-found handling is active.${NC}"
