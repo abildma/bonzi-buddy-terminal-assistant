@@ -253,14 +253,26 @@ rm -f ~/.subo-activate.zsh 2>/dev/null
 
 # Final installation message
 if [[ "$CURRENT_SHELL" == "zsh" ]]; then
+    # Export BONZI_BUDDY_DIR for immediate use (without requiring a restart)
+    echo -e "${BLUE}Making Bonzi Buddy available in current shell...${NC}"
+    export BONZI_BUDDY_DIR="$SCRIPT_DIR"
+
+    # Force update PATH to include ~/bin if it exists
+    if [ -d "$HOME/bin" ]; then
+        export PATH="$HOME/bin:$PATH"
+    fi
+
+    # Setup is complete! User information
     echo ""
     echo -e "${BRIGHT_GREEN}Installation complete!${NC}"
     echo -e "${YELLOW}Bonzi Buddy has been successfully installed on your system.${NC}"
-    echo -e "${CYAN}To activate Bonzi Buddy, please run:${NC}"
-    echo -e "${BRIGHT_PURPLE}exec zsh${NC}"
+    echo -e "${CYAN}The installation has activated Bonzi Buddy in your current shell.${NC}"
+    echo -e "${BLUE}You can start using ${BRIGHT_PURPLE}subo${BLUE} command right away.${NC}"
     echo ""
-    echo -e "${BLUE}This will completely reload your shell with Bonzi Buddy activated.${NC}"
-    echo -e "${PURPLE}Enjoy using Bonzi Buddy!${NC}"
+    echo -e "${YELLOW}Try it now with: ${BRIGHT_GREEN}subo apt update${NC}"
+    echo ""
+    echo -e "${BLUE}For best experience, restart your shell with:${NC}"
+    echo -e "${BRIGHT_PURPLE}exec zsh${NC}"
     echo ""
     echo -e "${GRAY}If you ever want to uninstall Bonzi Buddy, simply run:${NC}"
     echo -e "${YELLOW}$SCRIPT_DIR/uninstall.sh${NC}"
