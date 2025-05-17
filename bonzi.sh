@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-# Bonzi Buddy - A friendly terminal assistant without the spyware
+# Bonzi Buddy - A friendly and helpful terminal assistant
 # Usage: bonzi.sh [command]
 # Example: bonzi.sh sudo apt opdate
 

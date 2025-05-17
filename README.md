@@ -5,16 +5,16 @@ A friendly terminal assistant that helps with command suggestions and correction
 ![Screenshot from 2025-05-17 03-13-29](https://github.com/user-attachments/assets/1642d450-f816-4f99-af4e-34b1d2c5c7c6)
 
 
-## Disclaimer
+## About
 
 **This project is NOT affiliated with, endorsed by, or related to the original Bonzi Buddy software from the early 2000s.**
 
-This is an open-source terminal utility that helps correct command typos. Unlike the original Bonzi Buddy which was known for containing spyware/adware, this project:
-- Is completely open-source so you can verify the code yourself
-- Runs locally on your machine without sending any data externally
-- Is solely focused on being a helpful terminal assistant
+This is an open-source terminal utility that helps correct command typos and provides helpful assistance in your terminal. Key characteristics:
+- Completely open-source and transparent
+- Runs locally on your machine without any external connections
+- Designed to make your terminal experience more productive and enjoyable
 
-The name is used as a nostalgic reference only.
+The name is used as a nostalgic reference to bring a touch of friendly assistance to your command line.
 
 ## Features
 
