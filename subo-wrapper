@@ -1,0 +1,3 @@
+#!/bin/bash
+# Direct wrapper for subo
+"/home/ubuntu/CascadeProjects/bonzi-buddy/subo.sh" "$@"
