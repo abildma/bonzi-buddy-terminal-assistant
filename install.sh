@@ -11,17 +11,16 @@ NC='\033[0m' # No Color
 # ASCII art banner
 echo -e "${PURPLE}"
 cat << "EOF"
- ____                  _    ____            _     _       
-| __ )  ___  _ __  ___(_)  | __ ) _   _  __| | __| |_   _ 
-|  _ \ / _ \| '_ \/ __|    |  _ \| | | |/ _` |/ _` | | | |
-| |_) | (_) | | | \__ \_   | |_) | |_| | (_| | (_| | |_| |
-|____/ \___/|_| |_|___(_)  |____/ \__,_|\__,_|\__,_|\__, |
-                                                    |___/ 
+ ____                     _    ____            _     _       
+| __ )  ___  _ __  ____ (_)  | __ ) _   _  __| | __| |_   _ 
+|  _ \ / _ \| '_ \|_  / | |  |  _ \| | | |/ _` |/ _` | | | |
+| |_) | (_) | | | |/ /  | |  | |_) | |_| | (_| | (_| | |_| |
+|____/ \___/|_| |_/___| |_|  |____/ \__,_|\__,_|\__,_|\__, |
+                                                       |___/ 
 EOF
 echo -e "${NC}"
 
 echo -e "${YELLOW}Welcome to Bonzi Buddy Installation!${NC}"
-echo -e "A friendly terminal assistant with ${GREEN}zero spyware${NC}!"
 echo -e "${CYAN}Note: Bonzi Buddy currently only supports Zsh${NC}"
 echo ""
 
