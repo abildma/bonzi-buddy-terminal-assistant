@@ -128,11 +128,31 @@ elif [[ "$CURRENT_SHELL" == "bash" ]]; then
     if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
         echo -e "${YELLOW}Adding ~/bin to your PATH...${NC}"
         echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
+        # Apply PATH change for the current session
+        export PATH="$HOME/bin:$PATH"
     fi
     
     # Install subo wrapper for tab completion
     echo -e "${BLUE}Installing subo wrapper for tab completion...${NC}"
     ln -sf "$SCRIPT_DIR/subo-wrapper" ~/bin/subo
+    chmod +x ~/bin/subo
+    
+    # Create a command-not-found handler directory if it doesn't exist
+    if [ ! -d /usr/lib/command-not-found ]; then
+        echo -e "${YELLOW}Setting up command-not-found directory...${NC}"
+        sudo mkdir -p /usr/lib/command-not-found 2>/dev/null || mkdir -p ~/.local/command-not-found
+    fi
+    
+    # Try to set up the command-not-found handler
+    if [ -d /usr/lib/command-not-found ] && [ -w /usr/lib/command-not-found ]; then
+        echo -e "${BLUE}Setting up system-wide command-not-found handler...${NC}"
+        sudo cp "$SCRIPT_DIR/command_not_found.sh" /usr/lib/command-not-found/bonzi_handler 2>/dev/null
+        sudo chmod +x /usr/lib/command-not-found/bonzi_handler 2>/dev/null
+    elif [ -d ~/.local/command-not-found ]; then
+        echo -e "${BLUE}Setting up user command-not-found handler...${NC}"
+        cp "$SCRIPT_DIR/command_not_found.sh" ~/.local/command-not-found/bonzi_handler
+        chmod +x ~/.local/command-not-found/bonzi_handler
+    fi
     
     # Add Bonzi Buddy to .bashrc
     echo -e "${GREEN}Adding Bonzi Buddy to your .bashrc...${NC}"
@@ -147,12 +167,23 @@ elif [[ "$CURRENT_SHELL" == "bash" ]]; then
 export BONZI_BUDDY_DIR="$SCRIPT_DIR"
 alias bonzi="$SCRIPT_DIR/bonzi.sh"
 
+# Make sure bash-completion is loaded
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+    source /etc/bash_completion
+fi
+
 # Load subo command completion
 source "$SCRIPT_DIR/subo_completion.bash"
 
+# Function to handle command not found (used as a fallback)
+command_not_found_handle() {
+    "$SCRIPT_DIR/command_not_found.sh" "\$@"
+    return \$?
+}
+
 # Function to check commands before executing
 bonzi_preexec() {
-    if [[ "\$BASH_COMMAND" != "bonzi_preexec"* ]]; then
+    if [[ "\$BASH_COMMAND" != "bonzi_preexec"* && "\$BASH_COMMAND" != "command_not_found_handle"* ]]; then
         "$SCRIPT_DIR/bonzi_wrapper.sh" "\$BASH_COMMAND"
     fi
 }
