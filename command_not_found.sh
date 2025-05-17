@@ -55,9 +55,9 @@ case "$BASE_CMD" in
   "cd..")
     explanation=$(get_command_explanation "cd")
     echo -e ""
-    echo -e "    ${YELLOW}┌────────────────────────────────┐${NC}"
-    echo -e "    ${YELLOW}│${NC}  Did you mean: ${GREEN}cd ..${NC}  ${YELLOW}│${NC}"
-    echo -e "    ${YELLOW}└────────────────────────────────┘${NC}"
+    echo -e "    ${YELLOW}┌───────────────────────────┐${NC}"
+    echo -e "    ${YELLOW}│${NC}  Did you mean: ${GREEN}cd ..${NC}        ${YELLOW}│${NC}"
+    echo -e "    ${YELLOW}└───────────────────────────┘${NC}"
     echo -e "${CYAN}ℹ️  cd${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -74,9 +74,9 @@ case "$BASE_CMD" in
   "sl")
     explanation=$(get_command_explanation "ls")
     echo -e ""
-    echo -e "    ${YELLOW}┌────────────────────────────────┐${NC}"
-    echo -e "    ${YELLOW}│${NC}  Did you mean: ${GREEN}ls${NC}  ${YELLOW}│${NC}"
-    echo -e "    ${YELLOW}└────────────────────────────────┘${NC}"
+    echo -e "    ${YELLOW}┌───────────────────────────┐${NC}"
+    echo -e "    ${YELLOW}│${NC}  Did you mean: ${GREEN}ls${NC}          ${YELLOW}│${NC}"
+    echo -e "    ${YELLOW}└───────────────────────────┘${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -95,9 +95,16 @@ case "$BASE_CMD" in
     corrected="ls ${BASE_CMD#ls-}"
     explanation=$(get_command_explanation "ls")
     echo -e ""
-    echo -e "    ${YELLOW}┌────────────────────────────────┐${NC}"
-    echo -e "    ${YELLOW}│${NC}  Did you mean: ${GREEN}$corrected${NC}  ${YELLOW}│${NC}"
-    echo -e "    ${YELLOW}└────────────────────────────────┘${NC}"
+    local cmd_length=${#corrected}
+    local padding=$((20 - cmd_length))
+    local spaces=""
+    for ((i=0; i<padding; i++)); do
+      spaces="$spaces "
+    done
+    
+    echo -e "    ${YELLOW}┌───────────────────────────┐${NC}"
+    echo -e "    ${YELLOW}│${NC}  Did you mean: ${GREEN}$corrected${NC}$spaces${YELLOW}│${NC}"
+    echo -e "    ${YELLOW}└───────────────────────────┘${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
     read CONFIRM
@@ -156,9 +163,16 @@ case "$BASE_CMD" in
       explanation=$(get_command_explanation "$closest_cmd")
       
       echo -e ""
-      echo -e "    ${YELLOW}┌────────────────────────────────┐${NC}"
-      echo -e "    ${YELLOW}│${NC}  Did you mean: ${GREEN}$closest_cmd${NC}  ${YELLOW}│${NC}"
-      echo -e "    ${YELLOW}└────────────────────────────────┘${NC}"
+      local cmd_length=${#closest_cmd}
+      local padding=$((20 - cmd_length))
+      local spaces=""
+      for ((i=0; i<padding; i++)); do
+        spaces="$spaces "
+      done
+      
+      echo -e "    ${YELLOW}┌───────────────────────────┐${NC}"
+      echo -e "    ${YELLOW}│${NC}  Did you mean: ${GREEN}$closest_cmd${NC}$spaces${YELLOW}│${NC}"
+      echo -e "    ${YELLOW}└───────────────────────────┘${NC}"
       echo -e "${CYAN}ℹ️  $closest_cmd${NC} - $explanation"
       echo -n "Would you like to try the suggested command? (Y/n): "
       read CONFIRM
