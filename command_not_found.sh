@@ -11,11 +11,65 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Get the directory of this script
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+# Get the directory of this script - fix for Zsh compatibility
+if [ -n "${BASH_SOURCE[0]}" ]; then
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+else
+    SCRIPT_DIR="$( cd "$( dirname "$0" )" &> /dev/null && pwd )"
+fi
 
 # Source the command explanations
-source "$SCRIPT_DIR/command_explanations.sh"
+if [ -f "$SCRIPT_DIR/command_explanations.sh" ]; then
+    source "$SCRIPT_DIR/command_explanations.sh"
+else
+    # Define a simple fallback explanation function
+    get_command_explanation() {
+        local cmd=$1
+        case "$cmd" in
+            "ls") echo "Lists directory contents" ;;
+            "cd") echo "Change directory" ;;
+            "pwd") echo "Print working directory" ;;
+            "mkdir") echo "Make directories" ;;
+            "rm") echo "Remove files or directories" ;;
+            "cp") echo "Copy files and directories" ;;
+            "mv") echo "Move (rename) files" ;;
+            "cat") echo "Concatenate files and print to standard output" ;;
+            "grep") echo "Search for patterns in text" ;;
+            "find") echo "Search for files" ;;
+            "ps") echo "Report process status" ;;
+            "kill") echo "Send a signal to a process" ;;
+            "df") echo "Report file system disk space usage" ;;
+            "du") echo "Estimate file space usage" ;;
+            "tar") echo "Archive utility" ;;
+            "zip") echo "Package and compress files" ;;
+            "unzip") echo "Extract compressed files" ;;
+            "ssh") echo "OpenSSH remote login client" ;;
+            "scp") echo "Secure copy files between hosts" ;;
+            "sudo") echo "Execute command as another user" ;;
+            "apt") echo "Advanced package tool for Debian/Ubuntu" ;;
+            "dnf") echo "Package manager for RPM-based distributions" ;;
+            "yum") echo "Package manager for older RPM-based distributions" ;;
+            "pacman") echo "Package manager for Arch Linux" ;;
+            "git") echo "Distributed version control system" ;;
+            "make") echo "Build automation tool" ;;
+            "gcc") echo "GNU Compiler Collection" ;;
+            "python") echo "Python programming language interpreter" ;;
+            "python3") echo "Python 3 programming language interpreter" ;;
+            "top") echo "Display system processes" ;;
+            "htop") echo "Interactive process viewer" ;;
+            "ifconfig") echo "Configure network interface" ;;
+            "ip") echo "Show / manipulate routing, devices, policy routing and tunnels" ;;
+            "ping") echo "Send ICMP ECHO_REQUEST to network hosts" ;;
+            "netstat") echo "Print network connections, routing tables, etc." ;;
+            "systemctl") echo "Control the systemd system and service manager" ;;
+            "journalctl") echo "Query the systemd journal" ;;
+            "lsblk") echo "Lists information about block devices (storage)" ;;
+            "lsusb") echo "List USB devices" ;;
+            "lspci") echo "List PCI devices" ;;
+            *) echo "Common Linux command" ;;
+        esac
+    }
+fi
 
 # Display the initial message - keep this one with Bonzi Buddy name for branding
 echo -e "${PURPLE}Bonzi Buddy${NC} detected a ${YELLOW}missing command${NC}..."
@@ -55,8 +109,21 @@ case "$BASE_CMD" in
   "cd..")
     explanation=$(get_command_explanation "cd")
     echo -e ""
+    # Calculate proper spacing for cd ..
+    local cmd="cd .."
+    local cmd_length=${#cmd}
+    local padding=$((13 - cmd_length))
+    # Ensure padding is at least 1 space
+    if [ $padding -lt 1 ]; then
+        padding=1
+    fi
+    local spaces=""
+    for ((i=0; i<padding; i++)); do
+      spaces="$spaces "
+    done
+    
     echo -e "    ${YELLOW}┌───────────────────────────┐${NC}"
-    echo -e "    ${YELLOW}│${NC}  Did you mean: ${GREEN}cd ..${NC}        ${YELLOW}│${NC}"
+    echo -e "    ${YELLOW}│${NC}  Did you mean: ${GREEN}cd ..${NC}$spaces${YELLOW}│${NC}"
     echo -e "    ${YELLOW}└───────────────────────────┘${NC}"
     echo -e "${CYAN}ℹ️  cd${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
@@ -74,8 +141,21 @@ case "$BASE_CMD" in
   "sl")
     explanation=$(get_command_explanation "ls")
     echo -e ""
+    # Calculate proper spacing for ls
+    local cmd="ls"
+    local cmd_length=${#cmd}
+    local padding=$((13 - cmd_length))
+    # Ensure padding is at least 1 space
+    if [ $padding -lt 1 ]; then
+        padding=1
+    fi
+    local spaces=""
+    for ((i=0; i<padding; i++)); do
+      spaces="$spaces "
+    done
+    
     echo -e "    ${YELLOW}┌───────────────────────────┐${NC}"
-    echo -e "    ${YELLOW}│${NC}  Did you mean: ${GREEN}ls${NC}          ${YELLOW}│${NC}"
+    echo -e "    ${YELLOW}│${NC}  Did you mean: ${GREEN}ls${NC}$spaces${YELLOW}│${NC}"
     echo -e "    ${YELLOW}└───────────────────────────┘${NC}"
     echo -e "${CYAN}ℹ️  ls${NC} - $explanation"
     echo -n "Would you like to try the suggested command? (Y/n): "
@@ -95,8 +175,13 @@ case "$BASE_CMD" in
     corrected="ls ${BASE_CMD#ls-}"
     explanation=$(get_command_explanation "ls")
     echo -e ""
+    # Calculate proper spacing for box formatting
     local cmd_length=${#corrected}
-    local padding=$((20 - cmd_length))
+    local padding=$((13 - cmd_length))
+    # Ensure padding is at least 1 space
+    if [ $padding -lt 1 ]; then
+        padding=1
+    fi
     local spaces=""
     for ((i=0; i<padding; i++)); do
       spaces="$spaces "
@@ -163,8 +248,13 @@ case "$BASE_CMD" in
       explanation=$(get_command_explanation "$closest_cmd")
       
       echo -e ""
+      # Calculate proper spacing for box formatting
       local cmd_length=${#closest_cmd}
-      local padding=$((20 - cmd_length))
+      local padding=$((13 - cmd_length))
+      # Ensure padding is at least 1 space
+      if [ $padding -lt 1 ]; then
+          padding=1
+      fi
       local spaces=""
       for ((i=0; i<padding; i++)); do
         spaces="$spaces "
