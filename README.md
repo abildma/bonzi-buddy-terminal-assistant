@@ -1,8 +1,11 @@
 # Bonzi Buddy Terminal Assistant
 
-A friendly terminal assistant that helps with command suggestions and corrections.
+### A friendly terminal assistant that helps with command suggestions and corrections.
 
-![Screenshot from 2025-05-17 03-13-29](https://github.com/user-attachments/assets/1642d450-f816-4f99-af4e-34b1d2c5c7c6)
+![Screenshot from 2025-05-17 07-14-32](https://github.com/user-attachments/assets/106c3744-10ba-4079-b389-f92d602660f3)
+![image](https://github.com/user-attachments/assets/b5b9fbee-7811-4cff-a53d-6987c0663b87)
+![image](https://github.com/user-attachments/assets/2d407e9f-18b7-409c-b74d-cd905f13454a)
+
 
 
 ## About
@@ -29,7 +32,7 @@ The name is used as a nostalgic reference to bring a touch of friendly assistanc
 ## Quick Installation
 
 > **Note:** Bonzi Buddy currently only supports Zsh. See the [Contributing](#contributing) section if you'd like to help add Bash support!
-
+Recommended to backup your .zshrc file before running the install script.
 ```bash
 # Clone the repository
 git clone https://github.com/abildma/bonzi-buddy-terminal-assistant.git
@@ -57,7 +60,7 @@ exec zsh
 
 ### Complete Removal
 
-If you're experiencing any issues with the standard uninstaller or want to make absolutely certain that all traces of Bonzi Buddy are removed from your system, use the complete removal script:
+If you're experiencing any issues with the standard uninstaller use the complete removal script:
 
 ```bash
 # Run the complete removal script (nuclear option)
@@ -179,6 +182,9 @@ You can easily add more commands to the detection system by editing the `COMMON_
 ### Extending Command Explanations
 To add explanations for more commands or customize existing ones, edit the `get_command_explanation()` function in `command_explanations.sh`.
 
+## Known bugs 
+Uninstall.sh seems to break install.sh making it more manual work to reinstall atm. 
+
 ## Contributing
 
 Contributions are welcome! Here are some ways you can help improve Bonzi Buddy:
@@ -188,6 +194,7 @@ Contributions are welcome! Here are some ways you can help improve Bonzi Buddy:
 - Add more detailed command explanations
 - Create themes or customization options
 - Add support for other shells (fish, bash, etc.)
+- Bug fixes!
 
 To contribute:
 1. Fork the repository
