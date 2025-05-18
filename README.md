@@ -3,9 +3,6 @@
 ![image](https://github.com/user-attachments/assets/106c3744-10ba-4079-b389-f92d602660f3)
 ![image](https://github.com/user-attachments/assets/b5b9fbee-7811-4cff-a53d-6987c0663b87)
 ![image](https://github.com/user-attachments/assets/2d407e9f-18b7-409c-b74d-cd905f13454a)
-
-
-
 ## About
 
 **This project is NOT affiliated with, endorsed by, or related to the original Bonzi Buddy software from the early 2000s.**
@@ -201,9 +198,9 @@ To contribute:
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+   
 ![bonzi2](https://github.com/user-attachments/assets/a86496e2-eb47-447a-b758-bf96a27b89c0)
 
-contact -- abildma@gmail.com
-
+- contact abildma@gmail.com
 
 
