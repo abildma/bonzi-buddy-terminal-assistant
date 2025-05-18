@@ -1,6 +1,5 @@
 ![gif](https://github.com/user-attachments/assets/f1d57af1-e4f1-4b75-9007-a20a9ea56bb9)
 ### A friendly terminal assistant that helps with command suggestions and corrections.
-
 ![image](https://github.com/user-attachments/assets/106c3744-10ba-4079-b389-f92d602660f3)
 ![image](https://github.com/user-attachments/assets/b5b9fbee-7811-4cff-a53d-6987c0663b87)
 ![image](https://github.com/user-attachments/assets/2d407e9f-18b7-409c-b74d-cd905f13454a)
@@ -202,6 +201,9 @@ To contribute:
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+![bonzi2](https://github.com/user-attachments/assets/a86496e2-eb47-447a-b758-bf96a27b89c0)
+
+contact -- abildma@gmail.com
 
 
 
